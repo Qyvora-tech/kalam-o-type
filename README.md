@@ -1,63 +1,79 @@
-# ✒️ KalamoType - Digital Text to Authentic Handwritten Kalam
+# ✒️ Qalmotype - Digital Text to Authentic Handwritten Kalam Studio
 
-**KalamoType** ek smart AI-powered engine hai jo digital typing ko **100% natural, human-like handwritten kalam** mein convert karta hai.
+**Qalmotype** ek ultra-realistic, algorithm & canvas-powered handwriting web studio hai jo students ke typed assignments, Word files aur lecture notes ko **100% natural human handwriting** mein convert karta hai. GoodNotes-style continuous multi-page flow, anti-detection glyph variations, aur instant 1-click export tools ke sath.
 
 ---
 
-## 🌟 Key Features
+## 🌟 Competitor-Beating & Unique Features
 
-1. **Diverse Handwriting Styles (Including Messy):**
-   - **Reenie Beanie (Messy Doctor):** Doctor jaisi taiz aur messy likhai.
-   - **Just Another Hand (Messy Rushed):** Larko ki taiz ghaseet maar kar likhi hui handwriting.
-   - **Homemade Apple (Messy Cursive):** Natural, unorganized cursive style.
-   - **Caveat & Indie Flower:** Roz-marrah ki natural notes writing.
-   - **Patrick Hand & Shadows Into Light:** Saaf suthri neat classroom handwriting.
-   - **Kalam:** Pakistan/India ke students jaisi natural ballpoint writing.
+1. **GoodNotes-Style Continuous Multi-Page Flow:**
+   - Pages vertical downward continuous scroll hotay hain — bilkul GoodNotes / Notability jaisa experience.
+   - **Floating Page Dock:** Screen ke bottom par floating dock jahan se kisi bhi page (`Page 1`, `Page 2`, `Page 3`...) par 1 click mein smooth scroll jump kar saktay hain.
 
-2. **Apni Handwriting Upload (Font Clone):**
-   - Agar user ne [Calligraphr.com](https://www.calligraphr.com) se apna handwriting font (`.ttf` / `.otf`) banaya hai, toh wo seedha upload kar ke apni writing mein pura page likhwa sakta hai!
+2. **World's First Anti-Detection Glyph Randomizer:**
+   - Digital fonts mein repeated letters ("ee", "ll", "oo") bilkul ek jaisay dikhtay hain jis se shaq parhta hai.
+   - **Qalmotype Engine** har character par micro-scale ($X/Y$), random tilt, aur consecutive character variance apply karta hai taake koi bhi AI detector ya professor pakar na sake.
 
-3. **Authentic Paper Styles & Register Photo:**
-   - **Pakistani University Register Sheet:** Red margin line aur blue lines.
-   - **College Ruled Paper:** Standard blue lines.
-   - **Plain White A4:** White assignment page.
-   - **Vintage / Cream Paper:** Halka sa parchment tone.
-   - **Apne Notebook ki Photo Upload:** Apne register ke blank page ki photo upload karein aur text seedha usi ke ooper likha jayega!
+3. **Super-Convenient Export Suite:**
+   - **📋 Copy Page:** 1 click mein image clipboard mein copy karein aur bina kisi file download ke seedha MS Word, WhatsApp, ya Google Classroom mein `Ctrl+V` paste karein!
+   - **📦 Export ZIP:** Saare pages ko ek sath high-res PNGs ke ZIP folder mein download karein.
+   - **📄 Multi-Page PDF:** Standard A4 vector-quality multi-page PDF download.
+   - **🖨️ Direct Print:** Seedha printer par send karein.
 
-4. **Pen Types & Ink Effects:**
-   - **Ballpoint Pen:** Natural pressure variations aur light/dark strokes.
-   - **Gel Pen:** Dark, smooth flow.
-   - **Fountain Pen:** Ink bleed aur shading effect.
-   - **Graphite Pencil:** Matte pencil texture.
-   - **Colors:** Royal Blue, Navy Blue, Deep Black, Heading Red, Emerald Green, aur Custom Color Picker.
+4. **1-Click Quick Presets:**
+   - **🩺 Doctor Rx (Prescription):** Kristi font, hurried medicine scrawls.
+   - **👨‍⚕️ Doctor Scribble:** Reenie Beanie font, ultra-messy cursive.
+   - **🎒 Messy Hurried Student:** Just Another Hand font, last-minute rushed submission.
+   - **⭐ Neat Class Topper:** Playpen Sans / Kalam, royal blue ink, red headings, highlighter marker.
+   - **📐 Engineering & Math:** Architects Daughter, Lab Green grid paper, formulas.
+   - **📜 Vintage Calligraphy:** Cedarville Cursive, fountain pen ink bleed, vintage parchment.
 
-5. **Human Realism (Anti-Cheat / Anti-Detection):**
-   - **Baseline Jitter:** Har lafz thora ooper-neechay hota hai taake computer font na lage.
-   - **Letter Rotation:** Har character halka sa random angle par tilt hota hai.
-   - **Scanner / CamScanner Effect:** Subtle paper shadows, mobile camera lighting, aur paper grain texture.
+5. **Rich Markdown & Student Assignment Notation:**
+   - `**bold point**` → Simulated heavier pen nib pressure (thick stroke).
+   - `__underlined term__` → Hand-drawn organic wavy pen underline.
+   - `==highlighted term==` → Fluorescent yellow/green/blue marker swipe underneath.
+   - `~~mistake~~` → Natural human pen scratch-out cross line.
+   - `[x] Checklist` → Hand-drawn checkbox with blue/red checkmark.
+   - `- Bullet` → Hand-inked bullet dots.
+   - `🪄 Clean AI Text` → ChatGPT / Claude ke robotic phrases ("In conclusion", "As an AI...", `**`) ko 1-click mein student language mein convert karta hai.
 
-6. **Instant Export:**
-   - **Multi-page PDF Download:** Lambi assignments ke liye automatic page break (Page 1, Page 2, Page 3) aur 1-click A4 PDF export.
-   - **High-Res Image (PNG):** Individual page download.
+6. **Expanded Paper Library (10 Styles):**
+   - Assignment Register (Double red margin + university blue lines)
+   - College Ruled
+   - Yellow Legal Pad (American legal paper)
+   - Lab / Engineering Green Grid
+   - Dot Grid (Bullet Journal)
+   - French Ruled (Seyes - cursive calligraphy lines)
+   - Dark Chalkboard (Dark slate study aesthetic with chalk contrast)
+   - Ivory Plain Sheet
+   - Plain A4 White Sheet
+   - Vintage Antique Parchment
+   - **Apne Asli Register Ki Photo Upload:** Khaali page ki photo upload karein aur writing seedha uspe print hogi!
+
+7. **Student Life Touches & Atmosphere:**
+   - Chai / Coffee cup stain ring
+   - Teacher red pen ticks (✔)
+   - Binder punch holes
+   - Backpack wrinkle paper fold texture
+   - Desk Lamp, Daylight Window, CamScanner B&W, aur Mobile Flash modes
+   - **✍️ Freehand Pen Doodle Tool:** Kisi bhi word ko circle karein, arrow banayein, ya sketch karein.
+   - **🧘 Zen Theater Mode:** Fullscreen page focus mode (Press `Esc` to exit).
 
 ---
 
 ## 🚀 How to Run Locally
 
-Kisi heavy installation ya setup ki zaroorat nahi hai:
-1. Bas is folder ke andar `index.html` par double click karein aur apne kisi bhi browser (Chrome, Edge, Brave, etc.) mein open kar lein.
-2. Ya terminal mein chalaayein:
+Kisi heavy installation ya server ki zaroorat nahi hai:
+1. Browser mein open karein:
    ```bash
    python -m http.server 8080
    ```
-   Aur browser mein open karein: `http://localhost:8080`
+   Aur visit karein: `http://localhost:8080`
 
 ---
 
-## 🌐 Free Deployment (For Google AdSense)
+## 🌐 100% Free Hosting (Ready for Google AdSense)
 
-Aap isko **Vercel** ya **Netlify** par 2 minute mein free host kar saktay hain:
-1. Is folder ko GitHub repository par push karein.
-2. Vercel.com ya Netlify.com par ja kar repo connect karein.
-3. Zero-configuration deployment — bilkul free chalega!
-4. Website par traffic aane ke baad `index.html` mein Google AdSense ka code paste kar ke monetization on karein.
+1. Is folder ko GitHub par push karein.
+2. **Vercel** ya **Netlify** par import karein (Zero-config static site).
+3. Google AdSense code `index.html` mein paste kar ke revenue generate karein.

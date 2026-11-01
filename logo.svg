@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%" fill="none">
+  <!-- Pen Nib Outline (Teal / Cyan) -->
+  <!-- Top collar -->
+  <rect x="42" y="16" width="36" height="8" rx="2" stroke="#4aa3a3" stroke-width="4.5" stroke-linejoin="round" />
+  <!-- Main nib body -->
+  <path d="M44 24 L36 48 L60 96 L84 48 L76 24 Z" stroke="#4aa3a3" stroke-width="4.5" stroke-linejoin="round" />
+  <!-- Breather hole -->
+  <circle cx="60" cy="52" r="5" stroke="#4aa3a3" stroke-width="4" />
+  <!-- Slit to nib tip -->
+  <line x1="60" y1="57" x2="60" y2="94" stroke="#4aa3a3" stroke-width="4" stroke-linecap="round" />
+
+  <!-- Mouse Cursor Pointer (Purple / Indigo) overlapping on right -->
+  <path d="M66 38 L96 54 L84 62 L97 84 L87 90 L74 68 L62 76 Z" fill="#6d7ba2" stroke="#16181f" stroke-width="3" stroke-linejoin="round" />
+</svg>

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   KalamoType - Studio Aesthetic (Artisan & Natural Penmanship)
+   Qalmotype - Studio Aesthetic (Artisan & Natural Penmanship)
    Bespoke, warm study desk workspace with authentic physical paper depth
    ========================================================================== */
 
@@ -26,8 +26,8 @@
   --text-muted: #64748b;
   --text-light: #94a3b8;
   
-  --header-height: 68px;
-  --sidebar-width: 460px;
+  --header-height: 64px;
+  --sidebar-width: 350px; /* Reduced from 460px to give 75%+ screen to the page */
   
   --radius-xs: 6px;
   --radius-sm: 8px;
@@ -65,22 +65,213 @@ body {
    HEADER
    ========================================================================== */
 .app-header {
-  height: var(--header-height);
+  height: 62px;
   background: #ffffff;
   border-bottom: 1px solid var(--border-light);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  z-index: 20;
+  padding: 0 20px;
+  z-index: 30;
   flex-shrink: 0;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  gap: 16px;
+  white-space: nowrap;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 28px;
+  flex-shrink: 0;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+/* ==========================================================================
+   OUTPUT MODE SWITCHER (PHOTO MODE VS PRINT MODE)
+   ========================================================================== */
+.output-mode-switch {
+  display: inline-flex;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 30px;
+  border: 1px solid var(--border-light);
+  gap: 2px;
+}
+
+.mode-pill {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.mode-pill:hover {
+  color: var(--text-primary);
+}
+
+.mode-pill.active {
+  background: #ffffff;
+  color: var(--primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* AUTO-SAVE STATUS PILL */
+.auto-save-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #10b981;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-left: 10px;
+  transition: all 0.2s ease;
+}
+
+.auto-save-pill.saving {
+  color: #f59e0b;
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+/* FREEHAND PEN DOODLE MODE */
+.btn-icon.draw-active {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+}
+
+.pages-wrapper.draw-mode .page-sheet canvas {
+  cursor: crosshair;
+}
+
+/* WRINKLE OVERLAY */
+.wrinkle-overlay {
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.06) 0px, transparent 2px, transparent 15px, rgba(255,255,255,0.08) 16px);
+}
+
+.btn-micro {
+  border: 1px solid var(--border-light);
+  background: #f8fafc;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s;
+}
+
+.btn-micro:hover {
+  background: #e2e8f0;
+  color: var(--text-primary);
+}
+
+.card-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   DRAG & DROP ZONE
+   ========================================================================== */
+.drop-zone-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(239, 246, 255, 0.95);
+  border: 2px dashed #3b82f6;
+  border-radius: var(--radius-sm);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #1d4ed8;
+  font-weight: 700;
+  font-size: 13px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.drop-zone-overlay i {
+  font-size: 28px;
+}
+
+.drag-over .drop-zone-overlay {
+  display: flex;
+}
+
+/* ==========================================================================
+   NEW PAPER PREVIEWS
+   ========================================================================== */
+.yellow-legal-preview {
+  background: repeating-linear-gradient(0deg, transparent, transparent 6px, #cbd5e1 6px, #cbd5e1 7px), #fef08a;
+  border-left: 5px solid #ef4444;
+}
+
+.lab-green-preview {
+  background-size: 6px 6px;
+  background-image: linear-gradient(to right, #bbf7d0 1px, transparent 1px), linear-gradient(to bottom, #bbf7d0 1px, transparent 1px);
+  background-color: #f0fdf4;
+}
+
+.dot-grid-preview {
+  background-size: 8px 8px;
+  background-image: radial-gradient(circle, #94a3b8 1px, transparent 1px);
+  background-color: #ffffff;
+}
+
+.ivory-plain-preview {
+  background: #faf7ee;
+}
+
+.french-ruled-preview {
+  background: repeating-linear-gradient(0deg, transparent, transparent 6px, #93c5fd 6px, #93c5fd 7px), #ffffff;
+  border-left: 4px solid #f87171;
+}
+
+.blackboard-preview {
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+/* ==========================================================================
+   PRINT MODE ON CANVAS (CLEAN FLAT OUTPUT)
+   ========================================================================== */
+.canvas-stage.print-mode {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  transform: none !important;
+}
+
+.canvas-stage.print-mode .canvas-overlay {
+  display: none !important;
 }
 
 .logo-wrapper {
@@ -90,24 +281,40 @@ body {
 }
 
 .logo-badge {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #1d4ed8, #4338ca);
-  color: #ffffff;
-  border-radius: var(--radius-md);
+  width: 42px;
+  height: 42px;
+  background: #17181f; /* Matches dark theme of official logo */
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.logo-badge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .logo-title {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 800;
   letter-spacing: -0.4px;
   color: var(--text-primary);
   line-height: 1.2;
+}
+
+.logo-brand-qalmo {
+  color: #5d688a; /* Elegant purple from logo */
+}
+
+.logo-brand-type {
+  color: #3b9b9b; /* Vibrant teal from logo */
 }
 
 .badge-edition {
@@ -280,8 +487,56 @@ body {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  z-index: 10;
+  z-index: 15;
   box-shadow: 2px 0 8px rgba(0,0,0,0.02);
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.sidebar.collapsed {
+  width: 0 !important;
+  border-right: none !important;
+  overflow: hidden !important;
+}
+
+/* FLOATING SIDEBAR TOGGLE BUTTON */
+.sidebar-toggle-btn {
+  position: absolute;
+  top: 14px;
+  right: -15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  z-index: 25;
+  transition: all 0.2s ease;
+  font-size: 11px;
+}
+
+.sidebar-toggle-btn:hover {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+
+.sidebar.collapsed .sidebar-toggle-btn {
+  right: -38px;
+  background: #1e293b;
+  color: #ffffff;
+  border-color: #334155;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.sidebar.collapsed .sidebar-toggle-btn i {
+  transform: rotate(180deg);
 }
 
 .sidebar-tabs {
@@ -292,7 +547,7 @@ body {
 }
 
 .tab-btn {
-  padding: 13px 6px;
+  padding: 10px 4px;
   font-size: 11px;
   font-weight: 700;
   color: var(--text-muted);
@@ -303,12 +558,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   transition: all 0.15s ease;
 }
 
 .tab-btn i {
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .tab-btn:hover {
@@ -326,100 +581,39 @@ body {
   display: none;
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 14px 14px;
 }
 
 .tab-content.active {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
 }
 
 /* ==========================================================================
-   PANEL CARDS
+   PANEL CARDS (COMPACTED FOR STREAMLINED EDITING)
    ========================================================================== */
 .panel-card {
   background: #ffffff;
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: 16px;
+  border-radius: var(--radius-sm);
+  padding: 13px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   box-shadow: var(--shadow-subtle);
-}
-
-.highlight-card {
-  background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
-  border: 1.5px dashed #86efac;
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.card-title i {
-  color: var(--primary);
-}
-
-.card-desc {
-  font-size: 11.5px;
-  color: var(--text-muted);
-  line-height: 1.45;
-}
-
-.badge-pill {
-  font-size: 10px;
-  padding: 2px 7px;
-  background: #f1f5f9;
-  color: var(--text-muted);
-  border-radius: 12px;
-  font-weight: 600;
-}
-
-.badge-free {
-  font-size: 10px;
-  padding: 2px 7px;
-  background: #dcfce7;
-  color: #15803d;
-  border-radius: 12px;
-  font-weight: 700;
-}
-
-.char-count {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-/* ==========================================================================
-   TEXTAREA & CHIPS
-   ========================================================================== */
-.textarea-wrapper {
-  position: relative;
 }
 
 textarea#input-text {
   width: 100%;
-  height: 250px;
-  padding: 14px;
+  height: 220px;
+  padding: 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-light);
   background: var(--bg-input);
   font-family: inherit;
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--text-primary);
   resize: vertical;
   outline: none;
@@ -599,8 +793,184 @@ textarea#input-text:focus {
 }
 
 /* ==========================================================================
-   FONT GRID
+   FONT SEARCH & CATEGORY PILLS
    ========================================================================== */
+.font-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  transition: all 0.2s;
+}
+
+.font-search-box:focus-within {
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.font-search-box i {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.font-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 12px;
+  width: 100%;
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.category-pills {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.category-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-pill {
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border-light);
+  background: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.cat-pill:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-border);
+  color: var(--primary);
+}
+
+.cat-pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+/* ==========================================================================
+   HIGHLIGHTER & SIGNATURE
+   ========================================================================== */
+.highlighter-palette {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hl-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--hl);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #cbd5e1;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hl-dot:hover {
+  transform: scale(1.15);
+}
+
+.hl-dot.active {
+  box-shadow: 0 0 0 2.5px var(--primary), 0 2px 8px rgba(0,0,0,0.2);
+  transform: scale(1.18);
+}
+
+.signature-input-box input {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--bg-input);
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.signature-input-box input:focus {
+  border-color: var(--primary);
+  background: #ffffff;
+}
+
+/* ==========================================================================
+   LIGHTING GRID
+   ========================================================================== */
+.lighting-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.light-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-light);
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.light-btn i {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.light-btn:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.light-btn.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.light-btn.active i {
+  color: var(--primary);
+}
+
+/* LIGHTING ATMOSPHERE MODES ON CANVAS STAGE */
+.canvas-stage.light-desk-lamp {
+  filter: sepia(0.08) contrast(1.02) brightness(0.99);
+}
+
+.canvas-stage.light-daylight {
+  filter: brightness(1.03) contrast(1.01) saturate(1.05);
+}
+
+.canvas-stage.light-camscanner {
+  filter: contrast(1.35) grayscale(0.2) brightness(1.02);
+}
+
+.canvas-stage.light-flash {
+  filter: contrast(1.12) brightness(0.96);
+}
 .font-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -932,9 +1302,37 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 16px;
   flex-shrink: 0;
   z-index: 5;
+  gap: 12px;
+}
+
+.preview-toolbar .quick-presets-bar {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 3px 8px;
+  border-radius: 24px;
+  gap: 6px;
+}
+
+.preview-toolbar .preset-label {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.preview-toolbar .preset-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #f1f5f9;
+  font-size: 11px;
+  padding: 3px 8px;
+}
+
+.preview-toolbar .preset-btn:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
 }
 
 .page-nav, .zoom-controls {
@@ -973,7 +1371,7 @@ input:checked + .slider:before {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 48px;
+  padding: 24px 20px;
   background-image: 
     radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.04) 0%, transparent 60%),
     linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
@@ -981,20 +1379,52 @@ input:checked + .slider:before {
   background-size: 100% 100%, 32px 32px, 32px 32px;
 }
 
-.canvas-stage {
-  position: relative;
-  box-shadow: var(--shadow-paper);
-  border-radius: 2px;
+/* ==========================================================================
+   GOODNOTES CONTINUOUS VERTICAL PAGES (PAGES FLOW DOWNWARDS)
+   ========================================================================== */
+.pages-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  padding: 10px 0 60px 0;
   transition: transform 0.15s ease-out;
   transform-origin: top center;
-  background: #ffffff;
 }
 
-canvas#assignment-canvas {
-  display: block;
-  width: 595px; /* A4 aspect ratio display */
-  height: 842px;
+.page-sheet {
+  position: relative;
+  box-shadow: var(--shadow-paper);
+  border-radius: 3px;
   background: #ffffff;
+  transition: transform 0.2s, box-shadow 0.2s;
+  transform-origin: top center;
+}
+
+.page-sheet canvas {
+  display: block;
+  width: 660px;
+  height: 934px;
+  background: #ffffff;
+  border-radius: inherit;
+}
+
+.page-badge {
+  position: absolute;
+  top: -13px;
+  right: 16px;
+  background: rgba(22, 26, 36, 0.88);
+  backdrop-filter: blur(8px);
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+  letter-spacing: 0.4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 5;
 }
 
 /* ==========================================================================
@@ -1007,6 +1437,7 @@ canvas#assignment-canvas {
   right: 0;
   bottom: 0;
   pointer-events: none;
+  border-radius: inherit;
 }
 
 .shadow-overlay {
@@ -1021,7 +1452,7 @@ canvas#assignment-canvas {
 }
 
 .crease-overlay {
-  display: none;
+  display: block;
   background: linear-gradient(to right, 
     transparent 0%, 
     transparent 48.5%, 
@@ -1032,8 +1463,143 @@ canvas#assignment-canvas {
   );
 }
 
+/* PRINT MODE ON PAGES WRAPPER */
+.pages-wrapper.print-mode .page-sheet {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  transform: none !important;
+}
+
+.pages-wrapper.print-mode .canvas-overlay,
+.pages-wrapper.print-mode .page-badge {
+  display: none !important;
+}
+
+/* LIGHTING ATMOSPHERE MODES ON PAGES WRAPPER */
+.pages-wrapper.light-desk-lamp .page-sheet {
+  filter: sepia(0.08) contrast(1.02) brightness(0.99);
+}
+
+.pages-wrapper.light-daylight .page-sheet {
+  filter: brightness(1.03) contrast(1.01) saturate(1.05);
+}
+
+.pages-wrapper.light-camscanner .page-sheet {
+  filter: contrast(1.35) grayscale(0.2) brightness(1.02);
+}
+
+.pages-wrapper.light-flash .page-sheet {
+  filter: contrast(1.12) brightness(0.96);
+}
+
 .tilt-effect {
   transform: rotate(-0.5deg) scale(0.99) !important;
+}
+
+/* ==========================================================================
+   GOODNOTES FLOATING PAGE DOCK
+   ========================================================================== */
+.page-dock-container {
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.page-dock {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(23, 27, 36, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 30px;
+  padding: 5px 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  max-width: 90%;
+  overflow-x: auto;
+}
+
+.dock-page-btn {
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.dock-page-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.dock-page-btn.active {
+  background: #3b9b9b;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(59, 155, 155, 0.45);
+}
+
+/* ==========================================================================
+   TOAST NOTIFICATION PILL
+   ========================================================================== */
+.toast-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast-pill {
+  pointer-events: auto;
+  background: #17181f;
+  color: #f8fafc;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transform: translateY(12px) scale(0.96);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toast-pill.toast-show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ==========================================================================
+   ZEN THEATER MODE (FULLSCREEN FOCUS PREVIEW)
+   ========================================================================== */
+body.zen-mode .app-header {
+  height: 48px;
+  padding: 0 16px;
+}
+
+body.zen-mode .sidebar {
+  display: none !important;
+}
+
+body.zen-mode .preview-toolbar {
+  background: rgba(23, 27, 36, 0.75);
 }
 
 /* ==========================================================================

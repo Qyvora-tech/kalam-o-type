@@ -3,19 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KalamoType - Natural Penmanship & Assignment Studio</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✒️</text></svg>">
+  <title>Qalmotype - Natural Penmanship & Assignment Studio</title>
+  <link rel="icon" type="image/png" href="icon.png">
   
-  <!-- Authentic Human Handwriting Fonts (Including Real Doctor Prescriptions & Messy Hands) -->
+  <!-- Authentic Human Handwriting Fonts (Expanded Catalog: 22+ Real Human Hands) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@400..700&family=Cedarville+Cursive&family=Zeyada&family=Kristi&family=Beth+Ellen&family=Homemade+Apple&family=Indie+Flower&family=Just+Another+Hand&family=Kalam:wght@300;400;700&family=Nanum+Pen+Script&family=Patrick+Hand&family=Reenie+Beanie&family=Shadows+Into+Light&family=Rock+Salt&family=Marck+Script&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@400..700&family=Cedarville+Cursive&family=Zeyada&family=Kristi&family=Beth+Ellen&family=Homemade+Apple&family=Indie+Flower&family=Just+Another+Hand&family=Kalam:wght@300;400;700&family=Nanum+Pen+Script&family=Patrick+Hand&family=Reenie+Beanie&family=Shadows+Into+Light&family=Rock+Salt&family=Marck+Script&family=Architects+Daughter&family=Gloria+Hallelujah&family=Nothing+You+Could+Do&family=Waiting+for+the+Sunrise&family=Dekko&family=Playpen+Sans:wght@400;500;600&family=Square+Peg&family=Walter+Turncoat&family=Handlee&family=Dawning+of+a+New+Day&display=swap" rel="stylesheet">
   
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <!-- jsPDF for direct PDF export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- JSZip for 1-click batch ZIP export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- Mammoth.js for direct Word (.docx) document import (like HandTextAI) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -25,36 +29,52 @@
     <header class="app-header">
       <div class="header-left">
         <div class="logo-wrapper">
-          <!-- Logo container: User can replace with image or use custom logo -->
+          <!-- Official Logo Icon Mark -->
           <div class="logo-badge" id="logo-badge-container">
-            <img id="custom-app-logo" src="" alt="Logo" style="display:none; width:100%; height:100%; object-fit:contain; border-radius:inherit;">
-            <i class="fa-solid fa-pen-nib" id="default-logo-icon"></i>
+            <img id="custom-app-logo" src="icon.png" alt="Qalmotype Logo">
           </div>
           <div class="logo-text">
-            <div class="logo-title">KalamoType <span class="badge-edition">STUDIO</span></div>
-            <div class="logo-sub">Natural Penmanship & Handwriting Studio</div>
+            <div class="logo-title"><span class="logo-brand-qalmo">Qalmo</span><span class="logo-brand-type">type</span> <span class="badge-edition">STUDIO</span></div>
+            <div class="logo-sub">Natural Penmanship Studio</div>
           </div>
         </div>
+      </div>
 
-        <!-- QUICK PRESET SHORTCUTS -->
-        <div class="quick-presets-bar">
-          <span class="preset-label"><i class="fa-solid fa-wand-magic-sparkles"></i> Quick Styles:</span>
-          <button class="preset-btn" data-preset="doctor-rx"><i class="fa-solid fa-prescription"></i> Doctor Rx (Prescription)</button>
-          <button class="preset-btn" data-preset="doctor"><i class="fa-solid fa-user-doctor"></i> Doctor Scribble</button>
-          <button class="preset-btn" data-preset="rushed"><i class="fa-solid fa-person-running"></i> Messy Hurried</button>
-          <button class="preset-btn" data-preset="topper"><i class="fa-solid fa-star"></i> Class Topper Neat</button>
+      <!-- CENTER: OUTPUT MODE SWITCHER & AUTO-SAVE INDICATOR -->
+      <div class="header-center">
+        <div class="output-mode-switch">
+          <button class="mode-pill active" id="mode-photo" data-mode="photo" title="Realistic photographed notebook scene with shadows and ambient light">
+            <i class="fa-solid fa-camera"></i> <span>Photo Mode</span>
+          </button>
+          <button class="mode-pill" id="mode-print" data-mode="print" title="Clean, crisp A4 for physical printer and LMS submission">
+            <i class="fa-solid fa-print"></i> <span>Print Mode</span>
+          </button>
+        </div>
+        <div class="auto-save-pill" id="auto-save-status" title="Your work is automatically saved in your browser">
+          <i class="fa-solid fa-check"></i> <span>Saved</span>
         </div>
       </div>
 
       <div class="header-actions">
+        <!-- IMPORT DOCUMENT BUTTON -->
+        <label class="btn btn-outline btn-sm" style="cursor:pointer;" title="Import Word (.docx) or Text (.txt) file">
+          <input type="file" id="doc-file-input" accept=".docx,.txt,.md" style="display:none;">
+          <i class="fa-solid fa-file-import"></i> <span>Import Doc</span>
+        </label>
         <button id="btn-sample-text" class="btn btn-ghost" title="Load sample assignment">
           <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Sample</span>
+        </button>
+        <button id="btn-copy-img" class="btn btn-ghost" title="Copy current page to clipboard (Ctrl+V into Word / WhatsApp)">
+          <i class="fa-regular fa-copy"></i> <span>Copy Page</span>
         </button>
         <button id="btn-print" class="btn btn-ghost" title="Print directly to printer">
           <i class="fa-solid fa-print"></i> <span>Print</span>
         </button>
         <button id="btn-download-img" class="btn btn-outline" title="Download current page as high-res PNG">
-          <i class="fa-solid fa-image"></i> <span>Save Image</span>
+          <i class="fa-solid fa-image"></i> <span>Save PNG</span>
+        </button>
+        <button id="btn-download-zip" class="btn btn-outline" title="Download all pages as ZIP archive">
+          <i class="fa-solid fa-file-zipper"></i> <span>Export ZIP</span>
         </button>
         <button id="btn-download-pdf" class="btn btn-primary" title="Export complete multi-page PDF">
           <i class="fa-solid fa-file-pdf"></i> <span>Download PDF</span>
@@ -66,6 +86,11 @@
     <main class="app-main">
       <!-- CONTROL SIDEBAR -->
       <aside class="sidebar" id="sidebar">
+        <!-- COLLAPSE / EXPAND TOGGLE BUTTON -->
+        <button id="btn-toggle-sidebar" class="sidebar-toggle-btn" title="Collapse / Expand Sidebar to see full page">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
         <!-- NAVIGATION TABS -->
         <div class="sidebar-tabs">
           <button class="tab-btn active" data-tab="text-tab">
@@ -91,21 +116,49 @@
           <div class="panel-card">
             <div class="card-header">
               <span class="card-title"><i class="fa-solid fa-keyboard"></i> Assignment Text</span>
-              <span class="char-count" id="char-count">0 words | 0 chars</span>
+              <div class="card-header-tools">
+                <button class="btn-micro" id="btn-quick-paste" title="Paste text from clipboard"><i class="fa-solid fa-clipboard"></i> Paste</button>
+                <span class="char-count" id="char-count">0 words | 0 chars</span>
+              </div>
             </div>
             
-            <div class="textarea-wrapper">
+            <div class="textarea-wrapper" id="drop-zone-wrapper">
               <textarea id="input-text" spellcheck="false" placeholder="Apna text yahan likhein ya paste karein...
-Tip: Headings ke shuru mein # lagayein (e.g. # Topic Name)
-Tip: Crossed-out mistake likhne ke liye ~~galt lafz~~ use karein!"></textarea>
+Tip: Word (.docx) ya .txt file ko seedha yahan drag & drop karein!
+Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~word~~"></textarea>
+              <div class="drop-zone-overlay" id="drop-overlay">
+                <i class="fa-solid fa-cloud-arrow-down"></i>
+                <span>Drop Word (.docx) or Text file here</span>
+              </div>
             </div>
 
-            <!-- SMART CHIP ACTIONS -->
+            <!-- SMART CHIP ACTIONS & FORMATTING -->
             <div class="chip-bar">
+              <button class="chip" id="chip-clean-ai" title="Remove ChatGPT robot phrases, asterisks & AI markers"><i class="fa-solid fa-wand-magic-sparkles" style="color:#6366f1;"></i> Clean AI Text</button>
               <button class="chip" id="chip-heading" title="Add prominent heading"><i class="fa-solid fa-heading"></i> Heading</button>
-              <button class="chip" id="chip-date" title="Insert today's date"><i class="fa-regular fa-calendar"></i> Date</button>
+              <button class="chip" id="chip-bold" title="Write with heavier pen pressure"><i class="fa-solid fa-bold"></i> **Bold Pressure**</button>
+              <button class="chip" id="chip-underline" title="Hand-drawn natural underline"><i class="fa-solid fa-underline"></i> __Underline__</button>
+              <button class="chip" id="chip-highlight" title="Highlight keywords with marker"><i class="fa-solid fa-highlighter" style="color:#eab308;"></i> ==Highlight==</button>
               <button class="chip" id="chip-mistake" title="Add human mistake scratch"><i class="fa-solid fa-strikethrough"></i> Scratch Cut</button>
+              <button class="chip" id="chip-checklist" title="Insert hand-drawn checkbox"><i class="fa-regular fa-square-check"></i> [x] Task</button>
+              <button class="chip" id="chip-bullet" title="Add bullet list item"><i class="fa-solid fa-list-ul"></i> Bullet</button>
+              <button class="chip" id="chip-date" title="Insert today's date"><i class="fa-regular fa-calendar"></i> Date</button>
               <button class="chip chip-danger" id="chip-clear" title="Clear all text"><i class="fa-regular fa-trash-can"></i> Clear</button>
+            </div>
+          </div>
+
+          <!-- STUDENT SIGNATURE -->
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-signature"></i> Student Signature</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-signature" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="card-desc">Assignment ke aakhir mein student ke signature stamp karein:</p>
+            <div class="signature-input-box">
+              <input type="text" id="signature-text" value="Muhammad Ali" placeholder="Enter student name for signature...">
             </div>
           </div>
 
@@ -218,13 +271,45 @@ Tip: Crossed-out mistake likhne ke liye ~~galt lafz~~ use karein!"></textarea>
             </div>
           </div>
 
-          <!-- HANDWRITING STYLE SELECTION -->
+          <!-- HANDWRITING STYLE SELECTION & EXPANDED CATALOG -->
           <div class="panel-card">
             <div class="card-header">
               <span class="card-title"><i class="fa-solid fa-signature"></i> Choose Handwriting Style</span>
+              <span class="badge-pill" id="font-count-badge">22 Styles</span>
             </div>
+
+            <!-- SEARCH & CATEGORY FILTER -->
+            <div class="font-search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="font-search" placeholder="Search fonts (e.g. doctor, messy, clean)...">
+            </div>
+
+            <div class="category-pills" id="category-pills">
+              <button class="cat-pill active" data-cat="all">All</button>
+              <button class="cat-pill" data-cat="doctor">🩺 Doctor</button>
+              <button class="cat-pill" data-cat="messy">🌪️ Messy</button>
+              <button class="cat-pill" data-cat="student">🎒 Student</button>
+              <button class="cat-pill" data-cat="topper">🌟 Neat Topper</button>
+              <button class="cat-pill" data-cat="cursive">✒️ Cursive</button>
+            </div>
+
             <div class="font-grid" id="font-selector">
               <!-- Dynamically populated via app.js -->
+            </div>
+          </div>
+
+          <!-- HIGHLIGHTER MARKER TOOL -->
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-highlighter"></i> Highlighter Marker Color</span>
+            </div>
+            <p class="card-desc">Text mein <code>==word==</code> likhein taake key points highlight hon:</p>
+            <div class="highlighter-palette">
+              <button class="hl-dot active" style="--hl: rgba(254, 240, 138, 0.65);" data-color="rgba(254, 240, 138, 0.65)" title="Fluorescent Yellow"></button>
+              <button class="hl-dot" style="--hl: rgba(187, 247, 208, 0.65);" data-color="rgba(187, 247, 208, 0.65)" title="Pastel Green"></button>
+              <button class="hl-dot" style="--hl: rgba(191, 219, 254, 0.65);" data-color="rgba(191, 219, 254, 0.65)" title="Sky Blue"></button>
+              <button class="hl-dot" style="--hl: rgba(254, 215, 170, 0.65);" data-color="rgba(254, 215, 170, 0.65)" title="Soft Orange"></button>
+              <button class="hl-dot" style="--hl: rgba(24bc, 231, 255, 0.65);" data-color="rgba(233, 213, 255, 0.65)" title="Lilac Purple"></button>
             </div>
           </div>
 
@@ -249,7 +334,10 @@ Tip: Crossed-out mistake likhne ke liye ~~galt lafz~~ use karein!"></textarea>
         <!-- TAB 3: NOTEBOOK & PAPER -->
         <div class="tab-content" id="paper-tab">
           <div class="panel-card">
-            <div class="card-header"><span class="card-title"><i class="fa-solid fa-file"></i> Page Layout</span></div>
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-file"></i> Page Layout & Paper Library</span>
+              <span class="badge-pill">8 Styles</span>
+            </div>
             <div class="paper-grid" id="paper-selector">
               <button class="paper-card active" data-paper="ruled-margin">
                 <div class="paper-preview ruled-margin-preview"></div>
@@ -265,28 +353,75 @@ Tip: Crossed-out mistake likhne ke liye ~~galt lafz~~ use karein!"></textarea>
                   <small>Standard clean horizontal lines</small>
                 </div>
               </button>
+              <button class="paper-card" data-paper="yellow-legal">
+                <div class="paper-preview yellow-legal-preview"></div>
+                <div class="paper-info">
+                  <strong>Yellow Legal Pad</strong>
+                  <small>Classic American yellow pad with red margin</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="lab-green">
+                <div class="paper-preview lab-green-preview"></div>
+                <div class="paper-info">
+                  <strong>Lab / Engineering Grid</strong>
+                  <small>Technical green calculation grid</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="dot-grid">
+                <div class="paper-preview dot-grid-preview"></div>
+                <div class="paper-info">
+                  <strong>Dot Grid (Bullet Journal)</strong>
+                  <small>Minimalist bullet journaling dots</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="ivory-plain">
+                <div class="paper-preview ivory-plain-preview"></div>
+                <div class="paper-info">
+                  <strong>Ivory Plain Sheet</strong>
+                  <small>Warm soft off-white book paper</small>
+                </div>
+              </button>
               <button class="paper-card" data-paper="blank-white">
                 <div class="paper-preview blank-white-preview"></div>
                 <div class="paper-info">
                   <strong>Plain A4 White Sheet</strong>
-                  <small>Blank exam paper</small>
+                  <small>Clean unlined assignment page</small>
                 </div>
               </button>
               <button class="paper-card" data-paper="parchment">
                 <div class="paper-preview parchment-preview"></div>
                 <div class="paper-info">
-                  <strong>Cream / Vintage Paper</strong>
-                  <small>Warm subtle texture</small>
+                  <strong>Vintage Parchment</strong>
+                  <small>Warm textured antique paper</small>
                 </div>
               </button>
-              <button class="paper-card" data-paper="grid">
-                <div class="paper-preview grid-preview"></div>
+              <button class="paper-card" data-paper="french-ruled">
+                <div class="paper-preview french-ruled-preview"></div>
                 <div class="paper-info">
-                  <strong>Math / Graph Sheet</strong>
-                  <small>Engineering grid lines</small>
+                  <strong>French Ruled (Seyes)</strong>
+                  <small>Fine lines for cursive practice</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="blackboard">
+                <div class="paper-preview blackboard-preview"></div>
+                <div class="paper-info">
+                  <strong>Dark Chalkboard</strong>
+                  <small>Modern dark aesthetic study notes</small>
                 </div>
               </button>
             </div>
+          </div>
+
+          <!-- SMART AUTO-ALIGN TO LINES (HANDTEXTAI INSPIRED) -->
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-align-justify"></i> Smart Line Snapping</span>
+              <label class="switch">
+                <input type="checkbox" id="toggle-snap-lines" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="card-desc">Handwriting ko bilkul notebook ki line ke ooper natural tareeqay se bithaata hai taake lafz hawa mein na tair rahe hon.</p>
           </div>
 
           <!-- BINDER / PUNCH HOLE / SPIRAL CUSTOMIZATION -->
@@ -372,49 +507,75 @@ Tip: Crossed-out mistake likhne ke liye ~~galt lafz~~ use karein!"></textarea>
             </div>
           </div>
 
+          <!-- AUTHENTIC UNIVERSITY LIFE TOUCHES -->
           <div class="panel-card">
             <div class="card-header">
-              <span class="card-title"><i class="fa-solid fa-mobile-screen"></i> CamScanner & Lighting Effects</span>
+              <span class="card-title"><i class="fa-solid fa-mug-hot"></i> Student Life Touches</span>
             </div>
             <div class="toggle-row">
               <div>
-                <strong>Corner Shadows / Gradient</strong>
-                <p>Jese desk par rakhe page par kamre ki light aur mobile ka saya parta hai</p>
+                <strong>Chai / Coffee Mug Stain</strong>
+                <p>Raat ko parhte waqt cup ka halka sa nishaan (faint coffee ring)</p>
               </div>
               <label class="switch">
-                <input type="checkbox" id="toggle-shadows" checked>
+                <input type="checkbox" id="toggle-coffee-stain" checked>
                 <span class="slider"></span>
               </label>
             </div>
             <div class="toggle-row">
               <div>
-                <strong>Paper Grain Texture</strong>
-                <p>Natural paper fiber aur rough paper feel</p>
+                <strong>Teacher Red Pen Tick Marks (✔)</strong>
+                <p>Professor ki laal pen se check ki hui ticks har point ke aage</p>
               </div>
               <label class="switch">
-                <input type="checkbox" id="toggle-grain" checked>
+                <input type="checkbox" id="toggle-teacher-ticks" checked>
                 <span class="slider"></span>
               </label>
             </div>
             <div class="toggle-row">
               <div>
-                <strong>Center Notebook Spine Crease</strong>
-                <p>Notebook ke beech ki halki si fold shadow</p>
+                <strong>Corner Fold / Dog-Ear Crease</strong>
+                <p>Page ke ooper ka kona halka sa mura hua (folded corner)</p>
               </div>
               <label class="switch">
-                <input type="checkbox" id="toggle-crease" checked>
+                <input type="checkbox" id="toggle-dog-ear">
                 <span class="slider"></span>
               </label>
             </div>
             <div class="toggle-row">
               <div>
-                <strong>Natural Photo Angle Tilt</strong>
-                <p>Halka sa camera tilt jese hath se photo li ho</p>
+                <strong>Backpack Wrinkles & Texture</strong>
+                <p>Bag mein rakhne se aane wale natural paper fiber folds</p>
               </div>
               <label class="switch">
-                <input type="checkbox" id="toggle-tilt">
+                <input type="checkbox" id="toggle-wrinkles" checked>
                 <span class="slider"></span>
               </label>
+            </div>
+          </div>
+
+          <!-- LIGHTING & ATMOSPHERE PRESETS -->
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-lightbulb"></i> Lighting Atmosphere</span>
+            </div>
+            <div class="lighting-grid" id="lighting-selector">
+              <button class="light-btn active" data-light="desk-lamp">
+                <i class="fa-solid fa-lamp"></i>
+                <span>Desk Lamp (Warm)</span>
+              </button>
+              <button class="light-btn" data-light="daylight">
+                <i class="fa-solid fa-sun"></i>
+                <span>Daylight Window</span>
+              </button>
+              <button class="light-btn" data-light="camscanner">
+                <i class="fa-solid fa-camera"></i>
+                <span>CamScanner B&W</span>
+              </button>
+              <button class="light-btn" data-light="flash">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Night Mobile Flash</span>
+              </button>
             </div>
           </div>
 
@@ -431,32 +592,50 @@ Tip: Crossed-out mistake likhne ke liye ~~galt lafz~~ use karein!"></textarea>
         <!-- STUDIO TOP BAR -->
         <div class="preview-toolbar">
           <div class="page-nav">
-            <button id="btn-prev-page" class="btn-icon" title="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
-            <span id="page-indicator" class="page-counter">Page 1 of 1</span>
-            <button id="btn-next-page" class="btn-icon" title="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+            <button id="btn-prev-page" class="btn-icon" title="Scroll to Previous Page"><i class="fa-solid fa-arrow-up"></i></button>
+            <span id="page-indicator" class="page-counter">1 Page</span>
+            <button id="btn-next-page" class="btn-icon" title="Scroll to Next Page"><i class="fa-solid fa-arrow-down"></i></button>
+          </div>
+
+          <!-- QUICK PRESET SHORTCUTS (CLEANLY IN PREVIEW TOOLBAR) -->
+          <div class="quick-presets-bar">
+            <span class="preset-label"><i class="fa-solid fa-wand-magic-sparkles"></i> Presets:</span>
+            <button class="preset-btn" data-preset="doctor-rx" title="Doctor Prescription"><i class="fa-solid fa-prescription"></i> Doctor Rx</button>
+            <button class="preset-btn" data-preset="doctor" title="Doctor Scribble"><i class="fa-solid fa-user-doctor"></i> Scribble</button>
+            <button class="preset-btn" data-preset="rushed" title="Messy Rushed Student"><i class="fa-solid fa-person-running"></i> Messy</button>
+            <button class="preset-btn" data-preset="topper" title="Neat Class Topper"><i class="fa-solid fa-star"></i> Neat Topper</button>
+            <button class="preset-btn" data-preset="engineering" title="Engineering & Math Grid"><i class="fa-solid fa-drafting-compass"></i> Engineering</button>
+            <button class="preset-btn" data-preset="vintage" title="Vintage Fountain Pen"><i class="fa-solid fa-feather-pointed"></i> Vintage</button>
           </div>
 
           <div class="zoom-controls">
+            <button id="btn-draw-mode" class="btn-icon" title="Freehand Pen Doodle on Page (Circle words, draw arrows, sketch)"><i class="fa-solid fa-pen-ruler"></i></button>
+            <button id="btn-zen-mode" class="btn-icon" title="Zen Theater Mode (Maximize canvas area - Esc to exit)"><i class="fa-solid fa-expand"></i></button>
             <button id="btn-zoom-out" class="btn-icon" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
             <span id="zoom-level">100%</span>
             <button id="btn-zoom-in" class="btn-icon" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
-            <button id="btn-zoom-reset" class="btn-icon" title="Reset Zoom (Fit)"><i class="fa-solid fa-expand"></i></button>
+            <button id="btn-zoom-reset" class="btn-icon" title="Fit to Screen"><i class="fa-solid fa-arrows-to-dot"></i></button>
           </div>
         </div>
 
-        <!-- CANVAS STAGE VIEWPORT -->
+        <!-- CANVAS STAGE VIEWPORT (GOODNOTES CONTINUOUS MULTI-PAGE VIEW) -->
         <div class="canvas-viewport" id="canvas-viewport">
-          <div class="canvas-stage" id="canvas-stage">
-            <canvas id="assignment-canvas" width="1240" height="1754"></canvas>
-            
-            <!-- OVERLAY REALISM EFFECTS -->
-            <div class="canvas-overlay grain-overlay" id="grain-overlay"></div>
-            <div class="canvas-overlay shadow-overlay" id="shadow-overlay"></div>
-            <div class="canvas-overlay crease-overlay" id="crease-overlay"></div>
+          <div class="pages-wrapper" id="pages-wrapper">
+            <!-- Dynamically generated GoodNotes-style vertical pages -->
+          </div>
+
+          <!-- GOODNOTES FLOATING PAGE DOCK / JUMP BAR -->
+          <div class="page-dock-container" id="page-dock-container">
+            <div class="page-dock" id="page-dock">
+              <!-- Dynamically populated page pills: Page 1, Page 2, Page 3... -->
+            </div>
           </div>
         </div>
       </section>
     </main>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
   </div>
 
   <script src="app.js"></script>
