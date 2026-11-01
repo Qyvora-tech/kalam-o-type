@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KalamoType - Natural Penmanship & Assignment Studio</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✒️</text></svg>">
+  
+  <!-- Authentic Human Handwriting Fonts (Including Real Doctor Prescriptions & Messy Hands) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@400..700&family=Cedarville+Cursive&family=Zeyada&family=Kristi&family=Beth+Ellen&family=Homemade+Apple&family=Indie+Flower&family=Just+Another+Hand&family=Kalam:wght@300;400;700&family=Nanum+Pen+Script&family=Patrick+Hand&family=Reenie+Beanie&family=Shadows+Into+Light&family=Rock+Salt&family=Marck+Script&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- jsPDF for direct PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- TOP NAVIGATION BAR -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-wrapper">
+          <!-- Logo container: User can replace with image or use custom logo -->
+          <div class="logo-badge" id="logo-badge-container">
+            <img id="custom-app-logo" src="" alt="Logo" style="display:none; width:100%; height:100%; object-fit:contain; border-radius:inherit;">
+            <i class="fa-solid fa-pen-nib" id="default-logo-icon"></i>
+          </div>
+          <div class="logo-text">
+            <div class="logo-title">KalamoType <span class="badge-edition">STUDIO</span></div>
+            <div class="logo-sub">Natural Penmanship & Handwriting Studio</div>
+          </div>
+        </div>
+
+        <!-- QUICK PRESET SHORTCUTS -->
+        <div class="quick-presets-bar">
+          <span class="preset-label"><i class="fa-solid fa-wand-magic-sparkles"></i> Quick Styles:</span>
+          <button class="preset-btn" data-preset="doctor-rx"><i class="fa-solid fa-prescription"></i> Doctor Rx (Prescription)</button>
+          <button class="preset-btn" data-preset="doctor"><i class="fa-solid fa-user-doctor"></i> Doctor Scribble</button>
+          <button class="preset-btn" data-preset="rushed"><i class="fa-solid fa-person-running"></i> Messy Hurried</button>
+          <button class="preset-btn" data-preset="topper"><i class="fa-solid fa-star"></i> Class Topper Neat</button>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="btn-sample-text" class="btn btn-ghost" title="Load sample assignment">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Sample</span>
+        </button>
+        <button id="btn-print" class="btn btn-ghost" title="Print directly to printer">
+          <i class="fa-solid fa-print"></i> <span>Print</span>
+        </button>
+        <button id="btn-download-img" class="btn btn-outline" title="Download current page as high-res PNG">
+          <i class="fa-solid fa-image"></i> <span>Save Image</span>
+        </button>
+        <button id="btn-download-pdf" class="btn btn-primary" title="Export complete multi-page PDF">
+          <i class="fa-solid fa-file-pdf"></i> <span>Download PDF</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN STUDIO AREA -->
+    <main class="app-main">
+      <!-- CONTROL SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <!-- NAVIGATION TABS -->
+        <div class="sidebar-tabs">
+          <button class="tab-btn active" data-tab="text-tab">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>Content</span>
+          </button>
+          <button class="tab-btn" data-tab="style-tab">
+            <i class="fa-solid fa-signature"></i>
+            <span>Hand & Pen</span>
+          </button>
+          <button class="tab-btn" data-tab="paper-tab">
+            <i class="fa-solid fa-sheet-plastic"></i>
+            <span>Notebook</span>
+          </button>
+          <button class="tab-btn" data-tab="realism-tab">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Human Vibe</span>
+          </button>
+        </div>
+
+        <!-- TAB 1: TEXT CONTENT & HELPERS -->
+        <div class="tab-content active" id="text-tab">
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-keyboard"></i> Assignment Text</span>
+              <span class="char-count" id="char-count">0 words | 0 chars</span>
+            </div>
+            
+            <div class="textarea-wrapper">
+              <textarea id="input-text" spellcheck="false" placeholder="Apna text yahan likhein ya paste karein...
+Tip: Headings ke shuru mein # lagayein (e.g. # Topic Name)
+Tip: Crossed-out mistake likhne ke liye ~~galt lafz~~ use karein!"></textarea>
+            </div>
+
+            <!-- SMART CHIP ACTIONS -->
+            <div class="chip-bar">
+              <button class="chip" id="chip-heading" title="Add prominent heading"><i class="fa-solid fa-heading"></i> Heading</button>
+              <button class="chip" id="chip-date" title="Insert today's date"><i class="fa-regular fa-calendar"></i> Date</button>
+              <button class="chip" id="chip-mistake" title="Add human mistake scratch"><i class="fa-solid fa-strikethrough"></i> Scratch Cut</button>
+              <button class="chip chip-danger" id="chip-clear" title="Clear all text"><i class="fa-regular fa-trash-can"></i> Clear</button>
+            </div>
+          </div>
+
+          <!-- DIAGRAM / SKETCH INSERTION -->
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-diagram-project"></i> Diagram / Formula Image</span>
+              <span class="badge-pill">Optional</span>
+            </div>
+            <p class="card-desc">Agar assignment mein koi flowchart, circuit ya chemical diagram chipkaani ho:</p>
+            <label class="custom-file-upload">
+              <input type="file" id="diagram-input" accept="image/*">
+              <i class="fa-solid fa-image"></i>
+              <span id="diagram-upload-label">Attach Diagram Image</span>
+            </label>
+            <div id="diagram-controls" style="display:none; margin-top:10px;">
+              <div class="slider-row">
+                <label>Diagram Size: <span id="diagram-size-val">220px</span></label>
+                <input type="range" id="diagram-size" min="100" max="450" value="220" step="10">
+              </div>
+              <button id="btn-remove-diagram" class="btn btn-ghost btn-sm btn-full"><i class="fa-solid fa-xmark"></i> Remove Diagram</button>
+            </div>
+          </div>
+
+          <!-- CUSTOM FONT CLONE UPLOAD -->
+          <div class="panel-card highlight-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-fingerprint"></i> Apni Handwriting Font (.ttf / .otf)</span>
+              <span class="badge-free">100% Free</span>
+            </div>
+            <p class="card-desc">Agar aapne Calligraphr.com se apni handwriting ka font banaya hai toh yahan upload karein:</p>
+            <label class="custom-file-upload">
+              <input type="file" id="custom-font-input" accept=".ttf,.otf,.woff">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span id="font-upload-label">Upload Font File</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- TAB 2: HANDWRITING FONT & PEN STYLES -->
+        <div class="tab-content" id="style-tab">
+          <!-- DUAL INK SYSTEM -->
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-palette"></i> Dual Ink Colors</span>
+            </div>
+            <p class="card-desc">Asli assignment mein heading aur body alag rang se likhein:</p>
+            
+            <div class="dual-ink-box">
+              <div class="ink-item">
+                <label>Main Body Ink:</label>
+                <div class="ink-picker-group">
+                  <button class="color-dot active" style="--c: #103b78;" data-type="body" data-color="#103b78" title="Royal Blue"></button>
+                  <button class="color-dot" style="--c: #0f172a;" data-type="body" data-color="#0f172a" title="Deep Black"></button>
+                  <button class="color-dot" style="--c: #1e3a8a;" data-type="body" data-color="#1e3a8a" title="Navy Blue"></button>
+                  <div class="color-picker-wrapper">
+                    <input type="color" id="body-color-picker" value="#103b78">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="ink-item">
+                <label>Headings Ink:</label>
+                <div class="ink-picker-group">
+                  <button class="color-dot" style="--c: #0f172a;" data-type="heading" data-color="#0f172a" title="Black Heading"></button>
+                  <button class="color-dot active" style="--c: #b91c1c;" data-type="heading" data-color="#b91c1c" title="Red Heading"></button>
+                  <button class="color-dot" style="--c: #047857;" data-type="heading" data-color="#047857" title="Green Heading"></button>
+                  <div class="color-picker-wrapper">
+                    <input type="color" id="heading-color-picker" value="#b91c1c">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PEN TYPE -->
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-pen-nib"></i> Pen Physics & Texture</span>
+            </div>
+            <div class="pen-types" id="pen-type-selector">
+              <button class="pen-card active" data-pen="ballpoint">
+                <div class="pen-icon-box"><i class="fa-solid fa-pen"></i></div>
+                <div class="pen-meta">
+                  <strong>Ballpoint Pen</strong>
+                  <small>Realistic micro-pressure & faint streaks</small>
+                </div>
+              </button>
+              <button class="pen-card" data-pen="gel">
+                <div class="pen-icon-box"><i class="fa-solid fa-pen-clip"></i></div>
+                <div class="pen-meta">
+                  <strong>Gel Pen (0.5mm)</strong>
+                  <small>Smooth, dark fluid ink flow</small>
+                </div>
+              </button>
+              <button class="pen-card" data-pen="fountain">
+                <div class="pen-icon-box"><i class="fa-solid fa-feather-pointed"></i></div>
+                <div class="pen-meta">
+                  <strong>Fountain Pen</strong>
+                  <small>Liquid ink shading & paper bleed</small>
+                </div>
+              </button>
+              <button class="pen-card" data-pen="pencil">
+                <div class="pen-icon-box"><i class="fa-solid fa-pencil"></i></div>
+                <div class="pen-meta">
+                  <strong>Lead Pencil (HB)</strong>
+                  <small>Granular graphite matte texture</small>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- HANDWRITING STYLE SELECTION -->
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-signature"></i> Choose Handwriting Style</span>
+            </div>
+            <div class="font-grid" id="font-selector">
+              <!-- Dynamically populated via app.js -->
+            </div>
+          </div>
+
+          <!-- TYPOGRAPHY SLIDERS -->
+          <div class="panel-card">
+            <div class="card-header"><span class="card-title"><i class="fa-solid fa-text-height"></i> Size & Spacing</span></div>
+            <div class="slider-row">
+              <label for="font-size">Font Size: <span id="font-size-val">21px</span></label>
+              <input type="range" id="font-size" min="14" max="32" value="21" step="1">
+            </div>
+            <div class="slider-row">
+              <label for="letter-spacing">Letter Spacing: <span id="letter-spacing-val">1px</span></label>
+              <input type="range" id="letter-spacing" min="-2" max="6" value="1" step="0.5">
+            </div>
+            <div class="slider-row">
+              <label for="word-spacing">Word Spacing: <span id="word-spacing-val">7px</span></label>
+              <input type="range" id="word-spacing" min="0" max="25" value="7" step="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: NOTEBOOK & PAPER -->
+        <div class="tab-content" id="paper-tab">
+          <div class="panel-card">
+            <div class="card-header"><span class="card-title"><i class="fa-solid fa-file"></i> Page Layout</span></div>
+            <div class="paper-grid" id="paper-selector">
+              <button class="paper-card active" data-paper="ruled-margin">
+                <div class="paper-preview ruled-margin-preview"></div>
+                <div class="paper-info">
+                  <strong>Assignment Register</strong>
+                  <small>Double red margin & university blue lines</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="ruled-plain">
+                <div class="paper-preview ruled-plain-preview"></div>
+                <div class="paper-info">
+                  <strong>College Ruled</strong>
+                  <small>Standard clean horizontal lines</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="blank-white">
+                <div class="paper-preview blank-white-preview"></div>
+                <div class="paper-info">
+                  <strong>Plain A4 White Sheet</strong>
+                  <small>Blank exam paper</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="parchment">
+                <div class="paper-preview parchment-preview"></div>
+                <div class="paper-info">
+                  <strong>Cream / Vintage Paper</strong>
+                  <small>Warm subtle texture</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="grid">
+                <div class="paper-preview grid-preview"></div>
+                <div class="paper-info">
+                  <strong>Math / Graph Sheet</strong>
+                  <small>Engineering grid lines</small>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- BINDER / PUNCH HOLE / SPIRAL CUSTOMIZATION -->
+          <div class="panel-card">
+            <div class="card-header"><span class="card-title"><i class="fa-solid fa-book-open"></i> Notebook Binding</span></div>
+            <div class="toggle-row">
+              <div>
+                <strong>Binder Punch Holes</strong>
+                <p>Register ke baayein taraf 2 hole punch marks</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggle-holes" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <strong>Top Header Meta Box</strong>
+                <p>Register ooper "Date" aur "Page No" print karein</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggle-header-meta" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- UPLOAD OWN NOTEBOOK PHOTO -->
+          <div class="panel-card highlight-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-camera"></i> Apne Asli Register Ki Photo</span>
+            </div>
+            <p class="card-desc">Apne actual register ke khaali page ki photo upload karein, text seedha usi par likha jayega:</p>
+            <label class="custom-file-upload">
+              <input type="file" id="custom-paper-input" accept="image/*">
+              <i class="fa-solid fa-camera-retro"></i>
+              <span id="paper-upload-label">Upload Notebook Page Photo</span>
+            </label>
+            <button id="btn-remove-custom-paper" class="btn btn-ghost btn-sm btn-full" style="display:none; margin-top: 8px;">
+              <i class="fa-solid fa-xmark"></i> Remove Custom Paper
+            </button>
+          </div>
+
+          <!-- MARGINS AND LINE HEIGHT -->
+          <div class="panel-card">
+            <div class="card-header"><span class="card-title"><i class="fa-solid fa-ruler-combined"></i> Margins & Ruler Alignment</span></div>
+            <div class="slider-row">
+              <label for="top-margin">Top Margin: <span id="top-margin-val">95px</span></label>
+              <input type="range" id="top-margin" min="30" max="220" value="95" step="5">
+            </div>
+            <div class="slider-row">
+              <label for="left-margin">Left Margin: <span id="left-margin-val">115px</span></label>
+              <input type="range" id="left-margin" min="20" max="200" value="115" step="5">
+            </div>
+            <div class="slider-row">
+              <label for="line-height">Line Height: <span id="line-height-val">34px</span></label>
+              <input type="range" id="line-height" min="22" max="60" value="34" step="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: HUMAN REALISM & ANTI-DETECTION -->
+        <div class="tab-content" id="realism-tab">
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-shield-halved"></i> Anti-Detection Realism</span>
+            </div>
+            <p class="card-desc">Computer font hone ka shaq khatam karne ke liye natural human imperfections:</p>
+            
+            <div class="slider-row">
+              <label for="jitter-amount">Baseline Jitter (Wobbly Line): <span id="jitter-val">1.2px</span></label>
+              <input type="range" id="jitter-amount" min="0" max="4" value="1.2" step="0.2">
+            </div>
+            
+            <div class="slider-row">
+              <label for="rotation-amount">Letter Tilt / Rotation: <span id="rotation-val">1.0°</span></label>
+              <input type="range" id="rotation-amount" min="0" max="3" value="1.0" step="0.2">
+            </div>
+
+            <div class="slider-row">
+              <label for="ink-bleed">Ink Bleed / Wetness: <span id="bleed-val">0.3</span></label>
+              <input type="range" id="ink-bleed" min="0" max="1" value="0.3" step="0.05">
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="card-header">
+              <span class="card-title"><i class="fa-solid fa-mobile-screen"></i> CamScanner & Lighting Effects</span>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <strong>Corner Shadows / Gradient</strong>
+                <p>Jese desk par rakhe page par kamre ki light aur mobile ka saya parta hai</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggle-shadows" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <strong>Paper Grain Texture</strong>
+                <p>Natural paper fiber aur rough paper feel</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggle-grain" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <strong>Center Notebook Spine Crease</strong>
+                <p>Notebook ke beech ki halki si fold shadow</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggle-crease" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <strong>Natural Photo Angle Tilt</strong>
+                <p>Halka sa camera tilt jese hath se photo li ho</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggle-tilt">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- ADSENSE BANNER PREVIEW / PLACEHOLDER -->
+          <div class="adsense-slot-preview">
+            <div class="adsense-label">Google AdSense Space (468x60 / Responsive)</div>
+            <div class="adsense-text">Aapke AdSense ads yahan seamlessly fit honge</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CANVAS PREVIEW STUDIO -->
+      <section class="preview-area">
+        <!-- STUDIO TOP BAR -->
+        <div class="preview-toolbar">
+          <div class="page-nav">
+            <button id="btn-prev-page" class="btn-icon" title="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
+            <span id="page-indicator" class="page-counter">Page 1 of 1</span>
+            <button id="btn-next-page" class="btn-icon" title="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+
+          <div class="zoom-controls">
+            <button id="btn-zoom-out" class="btn-icon" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+            <span id="zoom-level">100%</span>
+            <button id="btn-zoom-in" class="btn-icon" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+            <button id="btn-zoom-reset" class="btn-icon" title="Reset Zoom (Fit)"><i class="fa-solid fa-expand"></i></button>
+          </div>
+        </div>
+
+        <!-- CANVAS STAGE VIEWPORT -->
+        <div class="canvas-viewport" id="canvas-viewport">
+          <div class="canvas-stage" id="canvas-stage">
+            <canvas id="assignment-canvas" width="1240" height="1754"></canvas>
+            
+            <!-- OVERLAY REALISM EFFECTS -->
+            <div class="canvas-overlay grain-overlay" id="grain-overlay"></div>
+            <div class="canvas-overlay shadow-overlay" id="shadow-overlay"></div>
+            <div class="canvas-overlay crease-overlay" id="crease-overlay"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
