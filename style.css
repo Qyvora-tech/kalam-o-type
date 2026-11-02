@@ -170,6 +170,18 @@ body {
   background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.06) 0px, transparent 2px, transparent 15px, rgba(255,255,255,0.08) 16px);
 }
 
+/* DOG EAR CORNER FOLD */
+.dog-ear-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(225deg, #cbd5e1 0%, #cbd5e1 48%, rgba(0,0,0,0.18) 49%, rgba(0,0,0,0.05) 58%, transparent 59%);
+  pointer-events: none;
+  z-index: 6;
+}
+
 .btn-micro {
   border: 1px solid var(--border-light);
   background: #f8fafc;

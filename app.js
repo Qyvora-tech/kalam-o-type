@@ -37,6 +37,7 @@ const state = {
   showTeacherTicks: true,
   showSignature: true,
   showWrinkles: true,
+  showDogEar: false,
   drawMode: false,
   pageDrawings: {},
   signatureName: 'Muhammad Ali',
@@ -726,6 +727,18 @@ function setupEventListeners() {
     });
   }
 
+  // Corner Fold / Dog-Ear Crease Toggle
+  const toggleDogEar = document.getElementById('toggle-dog-ear');
+  if (toggleDogEar) {
+    toggleDogEar.addEventListener('change', (e) => {
+      state.showDogEar = e.target.checked;
+      document.querySelectorAll('.dog-ear-overlay').forEach(el => {
+        el.style.display = state.showDogEar ? 'block' : 'none';
+      });
+      triggerAutoSave();
+    });
+  }
+
   // Font Category Pills
   document.querySelectorAll('.cat-pill').forEach(pill => {
     pill.addEventListener('click', () => {
@@ -1325,6 +1338,7 @@ function renderCanvas() {
       <div class="canvas-overlay shadow-overlay"></div>
       <div class="canvas-overlay crease-overlay"></div>
       <div class="canvas-overlay wrinkle-overlay" style="display:${state.showWrinkles ? 'block' : 'none'};"></div>
+      <div class="canvas-overlay dog-ear-overlay" style="display:${state.showDogEar ? 'block' : 'none'};"></div>
     `;
     wrapper.appendChild(sheet);
   }
