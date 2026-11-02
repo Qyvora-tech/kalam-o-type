@@ -20,6 +20,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <!-- Mammoth.js for direct Word (.docx) document import (like HandTextAI) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <!-- PDF.js for rendering uploaded handwriting PDFs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -183,18 +185,50 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
             </div>
           </div>
 
-          <!-- CUSTOM FONT CLONE UPLOAD -->
-          <div class="panel-card highlight-card">
+          <!-- AI HANDWRITING CLONER FROM PHOTO / PDF / FONT -->
+          <div class="panel-card highlight-card" id="clone-panel-card">
             <div class="card-header">
-              <span class="card-title"><i class="fa-solid fa-fingerprint"></i> Apni Handwriting Font (.ttf / .otf)</span>
-              <span class="badge-free">100% Free</span>
+              <span class="card-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:#6366f1;"></i> AI Handwriting Cloner</span>
+              <span class="badge-free">Smart Scan</span>
             </div>
-            <p class="card-desc">Agar aapne Calligraphr.com se apni handwriting ka font banaya hai toh yahan upload karein:</p>
-            <label class="custom-file-upload">
-              <input type="file" id="custom-font-input" accept=".ttf,.otf,.woff">
-              <i class="fa-solid fa-cloud-arrow-up"></i>
-              <span id="font-upload-label">Upload Font File</span>
+            <p class="card-desc">Apni handwriting ki <strong>koi bhi photo, page ya PDF</strong> upload karein. Hamara AI system aapki likhai, pen color, tilt aur ink texture detect kar ke clone kar lega!</p>
+            
+            <label class="custom-file-upload" id="hw-upload-dropzone">
+              <input type="file" id="handwriting-sample-input" accept="image/*,application/pdf,.ttf,.otf,.woff">
+              <i class="fa-solid fa-camera-retro"></i>
+              <span id="hw-upload-label">Upload Photo, PDF ya Font</span>
             </label>
+
+            <!-- CLONED PROFILE STATUS (Shown after scanning) -->
+            <div id="cloned-profile-card" class="cloned-profile-box" style="display:none;">
+              <div class="cloned-profile-header">
+                <div class="cloned-thumb-wrapper">
+                  <img id="cloned-thumb-img" src="" alt="Cloned Sample">
+                </div>
+                <div class="cloned-profile-details">
+                  <div class="cloned-title"><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Cloned Profile Active</div>
+                  <div class="cloned-meta-tags">
+                    <span class="cloned-tag" id="tag-ink-color"><span class="color-preview-pip"></span> Ink Detected</span>
+                    <span class="cloned-tag" id="tag-pen-type">Pen: Ballpoint</span>
+                    <span class="cloned-tag" id="tag-slant-angle">Tilt: +1.2°</span>
+                  </div>
+                </div>
+              </div>
+              <div class="cloned-actions">
+                <button id="btn-revert-clone" class="btn btn-ghost btn-sm" title="Revert to standard fonts"><i class="fa-solid fa-rotate-left"></i> Revert</button>
+                <label class="btn btn-outline btn-sm" style="cursor:pointer;" title="Scan another photo or PDF">
+                  <input type="file" id="handwriting-rescan-input" accept="image/*,application/pdf" style="display:none;">
+                  <i class="fa-solid fa-arrows-rotate"></i> Re-scan
+                </label>
+              </div>
+            </div>
+
+            <!-- DOWNLOAD TEMPLATE SHEET HELPER -->
+            <div class="template-helper-row">
+              <button id="btn-download-sample-sheet" class="btn-text-link" title="Download printable sheet to write on">
+                <i class="fa-regular fa-file-pdf"></i> Download Sample Sheet (Optional)
+              </button>
+            </div>
           </div>
         </div>
 
@@ -633,6 +667,42 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
         </div>
       </section>
     </main>
+
+    <!-- AI HANDWRITING SCANNER MODAL -->
+    <div class="scanner-modal-backdrop" id="scanner-modal" style="display:none;">
+      <div class="scanner-modal-card">
+        <div class="scanner-modal-header">
+          <div class="scanner-modal-title">
+            <i class="fa-solid fa-wand-magic-sparkles" style="color:#6366f1;"></i>
+            <span>AI Handwriting Analysis & Cloning</span>
+          </div>
+          <button id="btn-close-scanner" class="btn-icon-close" title="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="scanner-preview-container">
+          <img id="scanner-preview-img" src="" alt="Handwriting Sample Preview">
+          <div class="scanner-laser-beam" id="scanner-laser"></div>
+        </div>
+
+        <div class="scanner-status-box">
+          <div class="scanner-step-text" id="scanner-step-text">Scanning image & isolating ink strokes...</div>
+          <div class="scanner-progress-bar">
+            <div class="scanner-progress-fill" id="scanner-progress-fill"></div>
+          </div>
+          <div class="scanner-metrics" id="scanner-metrics">
+            <span class="metric-item"><i class="fa-solid fa-eye-dropper"></i> <span id="metric-ink">Extracting Ink...</span></span>
+            <span class="metric-item"><i class="fa-solid fa-pen-nib"></i> <span id="metric-pen">Analyzing Pen...</span></span>
+            <span class="metric-item"><i class="fa-solid fa-italic"></i> <span id="metric-slant">Measuring Tilt...</span></span>
+          </div>
+        </div>
+
+        <div class="scanner-modal-footer">
+          <button id="btn-apply-clone" class="btn btn-primary btn-full" style="display:none;">
+            <i class="fa-solid fa-circle-check"></i> Apply Cloned Handwriting
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div class="toast-container" id="toast-container"></div>

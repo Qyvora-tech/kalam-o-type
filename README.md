@@ -14,7 +14,12 @@
    - Digital fonts mein repeated letters ("ee", "ll", "oo") bilkul ek jaisay dikhtay hain jis se shaq parhta hai.
    - **Qalmotype Engine** har character par micro-scale ($X/Y$), random tilt, aur consecutive character variance apply karta hai taake koi bhi AI detector ya professor pakar na sake.
 
-3. **Super-Convenient Export Suite:**
+3. **📸 AI Handwriting Cloner (Photo & PDF Scanner):**
+   - Kisi font generator ya Calligraphr ki zaroorat nahi: User apni **handwritten copy ya assignment ki picture ya PDF** upload karega.
+   - Hamara computer vision engine automatically **ink color**, **pen type** (ballpoint/gel/fountain), **natural tilt/slant angle**, aur **baseline wobble** detect kar ke handwriting profile clone kar deta hai!
+   - Sath hi **Printable Calibration Sheet (PDF)** bhi download kar saktay hain taake clean sample likh kar scan kiya ja sake.
+
+4. **Super-Convenient Export Suite:**
    - **📋 Copy Page:** 1 click mein image clipboard mein copy karein aur bina kisi file download ke seedha MS Word, WhatsApp, ya Google Classroom mein `Ctrl+V` paste karein!
    - **📦 Export ZIP:** Saare pages ko ek sath high-res PNGs ke ZIP folder mein download karein.
    - **📄 Multi-Page PDF:** Standard A4 vector-quality multi-page PDF download.

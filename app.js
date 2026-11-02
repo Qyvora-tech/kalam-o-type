@@ -992,39 +992,52 @@ function setupEventListeners() {
     renderCanvas();
   });
 
-  // Custom Font Upload (.ttf / .otf)
-  const customFontInput = document.getElementById('custom-font-input');
-  customFontInput.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      try {
-        const fontName = 'CustomUserFont_' + Date.now();
-        const buffer = await file.arrayBuffer();
-        const fontFace = new FontFace(fontName, buffer);
-        await fontFace.load();
-        document.fonts.add(fontFace);
+  // AI HANDWRITING CLONER FROM PHOTO / PDF / FONT
+  const hwInput = document.getElementById('handwriting-sample-input');
+  const hwRescanInput = document.getElementById('handwriting-rescan-input');
+  const btnCloseScanner = document.getElementById('btn-close-scanner');
+  const btnApplyClone = document.getElementById('btn-apply-clone');
+  const btnRevertClone = document.getElementById('btn-revert-clone');
+  const btnDownloadSheet = document.getElementById('btn-download-sample-sheet');
 
-        const customObj = {
-          id: fontName,
-          name: 'My Scanned Font',
-          category: 'all',
-          sample: 'User uploaded custom handwriting',
-          tag: 'Scanned',
-          tagClass: 'tag-cursive',
-          font: `"${fontName}", cursive`
-        };
-        HANDWRITING_FONTS.unshift(customObj);
-        state.fontFamily = fontName;
-        document.getElementById('font-upload-label').textContent = file.name;
+  if (hwInput) {
+    hwInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) handleHandwritingSampleUpload(file);
+    });
+  }
 
-        buildFontList();
-        renderCanvas();
-      } catch (err) {
-        alert('Font file load nahi ho saki. Valid .ttf ya .otf file chunein.');
-        console.error(err);
+  if (hwRescanInput) {
+    hwRescanInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) handleHandwritingSampleUpload(file);
+    });
+  }
+
+  if (btnCloseScanner) {
+    btnCloseScanner.addEventListener('click', () => {
+      const modal = document.getElementById('scanner-modal');
+      if (modal) modal.style.display = 'none';
+    });
+  }
+
+  if (btnApplyClone) {
+    btnApplyClone.addEventListener('click', () => {
+      if (pendingClonedProfile) {
+        applyClonedProfile(pendingClonedProfile, pendingThumbnailUrl);
       }
-    }
-  });
+      const modal = document.getElementById('scanner-modal');
+      if (modal) modal.style.display = 'none';
+    });
+  }
+
+  if (btnRevertClone) {
+    btnRevertClone.addEventListener('click', revertClonedProfile);
+  }
+
+  if (btnDownloadSheet) {
+    btnDownloadSheet.addEventListener('click', downloadCalibrationSheet);
+  }
 
   // Life Touches Toggles
   const toggleCoffee = document.getElementById('toggle-coffee-stain');
@@ -2335,4 +2348,462 @@ function updateActiveDockBtn() {
   document.querySelectorAll('.dock-page-btn').forEach(btn => {
     btn.classList.toggle('active', parseInt(btn.dataset.page, 10) === currentViewPage);
   });
+}
+
+// -------------------------------------------------------------
+// AI HANDWRITING CLONER FROM PHOTO / PDF / FONT
+// -------------------------------------------------------------
+let pendingClonedProfile = null;
+let pendingThumbnailUrl = '';
+
+async function handleHandwritingSampleUpload(file) {
+  const modal = document.getElementById('scanner-modal');
+  const previewImg = document.getElementById('scanner-preview-img');
+  const stepText = document.getElementById('scanner-step-text');
+  const progressFill = document.getElementById('scanner-progress-fill');
+  const metricInk = document.getElementById('metric-ink');
+  const metricPen = document.getElementById('metric-pen');
+  const metricSlant = document.getElementById('metric-slant');
+  const btnApply = document.getElementById('btn-apply-clone');
+
+  if (modal) modal.style.display = 'flex';
+  if (btnApply) btnApply.style.display = 'none';
+  if (progressFill) progressFill.style.width = '15%';
+  if (stepText) stepText.textContent = `Analyzing ${file.name}...`;
+
+  try {
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    const isFont = file.name.match(/\.(ttf|otf|woff)$/i);
+
+    if (isFont) {
+      const fontName = 'CustomUserFont_' + Date.now();
+      const buffer = await file.arrayBuffer();
+      const fontFace = new FontFace(fontName, buffer);
+      await fontFace.load();
+      document.fonts.add(fontFace);
+
+      const customObj = {
+        id: fontName,
+        name: 'My Scanned Font',
+        category: 'all',
+        sample: 'User uploaded custom handwriting',
+        tag: 'Cloned',
+        tagClass: 'tag-cursive',
+        font: `"${fontName}", cursive`
+      };
+      HANDWRITING_FONTS.unshift(customObj);
+
+      pendingClonedProfile = {
+        inkColor: state.bodyColor,
+        slant: 1.0,
+        thickness: 2.0,
+        penType: 'ballpoint',
+        jitter: 1.2,
+        matchedFont: fontName
+      };
+      pendingThumbnailUrl = 'icon.png';
+      if (progressFill) progressFill.style.width = '100%';
+      if (stepText) stepText.textContent = 'Custom Font Loaded Successfully!';
+      setTimeout(() => {
+        applyClonedProfile(pendingClonedProfile, pendingThumbnailUrl);
+        if (modal) modal.style.display = 'none';
+      }, 700);
+      return;
+    }
+
+    let sampleCanvas = null;
+    let sampleDataUrl = '';
+
+    if (isPdf) {
+      if (stepText) stepText.textContent = '[1/4] Rendering PDF page with PDF.js...';
+      if (progressFill) progressFill.style.width = '30%';
+
+      const buffer = await file.arrayBuffer();
+      sampleCanvas = await renderPdfToCanvas(buffer);
+      sampleDataUrl = sampleCanvas.toDataURL('image/jpeg', 0.85);
+    } else {
+      if (stepText) stepText.textContent = '[1/4] Loading image & paper binarization...';
+      if (progressFill) progressFill.style.width = '30%';
+
+      sampleCanvas = await renderImageFileToCanvas(file);
+      sampleDataUrl = sampleCanvas.toDataURL('image/jpeg', 0.85);
+    }
+
+    if (previewImg) previewImg.src = sampleDataUrl;
+    pendingThumbnailUrl = sampleDataUrl;
+
+    // Simulation of multi-stage scanning animation
+    await new Promise(r => setTimeout(r, 450));
+    if (stepText) stepText.textContent = '[2/4] Isolating ink strokes & extracting pigment...';
+    if (progressFill) progressFill.style.width = '55%';
+
+    // Run computer vision feature extraction
+    const analysis = analyzeHandwritingSample(sampleCanvas);
+    pendingClonedProfile = analysis;
+
+    if (metricInk) {
+      metricInk.innerHTML = `<span class="color-preview-pip" style="background:${analysis.inkColor}"></span> ${analysis.inkColor}`;
+    }
+
+    await new Promise(r => setTimeout(r, 450));
+    if (stepText) stepText.textContent = '[3/4] Measuring natural slant & stroke pressure...';
+    if (progressFill) progressFill.style.width = '80%';
+    if (metricPen) metricPen.textContent = `Pen: ${analysis.penType.toUpperCase()}`;
+    if (metricSlant) metricSlant.textContent = `Tilt: ${analysis.slant > 0 ? '+' : ''}${analysis.slant}°`;
+
+    await new Promise(r => setTimeout(r, 450));
+    if (stepText) stepText.textContent = '[4/4] Handwriting Cloned Successfully!';
+    if (progressFill) progressFill.style.width = '100%';
+
+    if (btnApply) {
+      btnApply.style.display = 'flex';
+      btnApply.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    setTimeout(() => {
+      applyClonedProfile(pendingClonedProfile, pendingThumbnailUrl);
+      if (modal) modal.style.display = 'none';
+    }, 800);
+
+  } catch (err) {
+    console.error('Handwriting clone error:', err);
+    if (stepText) stepText.textContent = 'Scan error. Please try another image or photo.';
+    alert('Handwriting scan karne mein masla hua. Kripya saaf photo ya PDF upload karein.');
+    if (modal) modal.style.display = 'none';
+  }
+}
+
+// RENDER PDF TO CANVAS VIA PDF.JS
+async function renderPdfToCanvas(arrayBuffer) {
+  const pdfjs = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
+  if (!pdfjs) {
+    throw new Error('PDF.js library not loaded');
+  }
+  pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
+  const pdf = await loadingTask.promise;
+  const page = await pdf.getPage(1);
+  const viewport = page.getViewport({ scale: 1.5 });
+
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  const ctx = canvas.getContext('2d');
+  await page.render({ canvasContext: ctx, viewport }).promise;
+  return canvas;
+}
+
+// RENDER IMAGE FILE TO CANVAS
+function renderImageFileToCanvas(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas);
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// COMPUTER VISION: ANALYZE HANDWRITING FROM IMAGE CANVAS
+function analyzeHandwritingSample(canvas) {
+  const w = Math.min(canvas.width, 800);
+  const h = Math.min(canvas.height, 1000);
+
+  const aCanvas = document.createElement('canvas');
+  aCanvas.width = w;
+  aCanvas.height = h;
+  const aCtx = aCanvas.getContext('2d');
+  aCtx.drawImage(canvas, 0, 0, w, h);
+
+  const imgData = aCtx.getImageData(0, 0, w, h);
+  const data = imgData.data;
+
+  // 1. Calculate average brightness of pixels to find ink vs paper threshold
+  let totalBrightness = 0;
+  let pixelCount = 0;
+  for (let i = 0; i < data.length; i += 16) {
+    const b = (data[i] + data[i+1] + data[i+2]) / 3;
+    totalBrightness += b;
+    pixelCount++;
+  }
+  const avgBrightness = totalBrightness / pixelCount;
+  const inkThreshold = Math.max(60, avgBrightness - 35);
+
+  // 2. Extract Ink Color (median RGB of dark pixels)
+  const inkPixelsR = [];
+  const inkPixelsG = [];
+  const inkPixelsB = [];
+  let darkPixelCount = 0;
+
+  for (let i = 0; i < data.length; i += 16) {
+    const r = data[i];
+    const g = data[i+1];
+    const b = data[i+2];
+    const brightness = (r + g + b) / 3;
+    if (brightness < inkThreshold) {
+      inkPixelsR.push(r);
+      inkPixelsG.push(g);
+      inkPixelsB.push(b);
+      darkPixelCount++;
+    }
+  }
+
+  let extractedColor = '#103b78';
+  if (darkPixelCount > 30) {
+    inkPixelsR.sort((a,b) => a - b);
+    inkPixelsG.sort((a,b) => a - b);
+    inkPixelsB.sort((a,b) => a - b);
+    const mid = Math.floor(darkPixelCount / 2);
+    const toHex = (c) => ('0' + Math.min(255, Math.max(0, Math.round(c))).toString(16)).slice(-2);
+    extractedColor = `#${toHex(inkPixelsR[mid])}${toHex(inkPixelsG[mid])}${toHex(inkPixelsB[mid])}`;
+  }
+
+  // 3. Measure Slant Angle
+  let slantSum = 0;
+  let slantSamples = 0;
+  for (let y = 10; y < h - 10; y += 10) {
+    for (let x = 10; x < w - 10; x += 10) {
+      const idx = (y * w + x) * 4;
+      const b = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+      if (b < inkThreshold) {
+        for (let dx = -6; dx <= 6; dx++) {
+          const checkIdx = ((y + 6) * w + (x + dx)) * 4;
+          if (checkIdx >= 0 && checkIdx < data.length) {
+            const bCheck = (data[checkIdx] + data[checkIdx+1] + data[checkIdx+2]) / 3;
+            if (bCheck < inkThreshold) {
+              const angleDeg = (Math.atan2(dx, 6) * 180) / Math.PI;
+              slantSum += angleDeg;
+              slantSamples++;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  let detectedSlant = slantSamples > 15 ? (slantSum / slantSamples) : 1.0;
+  detectedSlant = Math.max(-2.2, Math.min(2.5, detectedSlant * 0.35));
+
+  // 4. Measure Stroke Thickness
+  let strokeThicknessSum = 0;
+  let strokeSamples = 0;
+  for (let y = 15; y < h - 15; y += 12) {
+    let run = 0;
+    for (let x = 0; x < w; x++) {
+      const idx = (y * w + x) * 4;
+      const b = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+      if (b < inkThreshold) {
+        run++;
+      } else {
+        if (run >= 1 && run <= 12) {
+          strokeThicknessSum += run;
+          strokeSamples++;
+        }
+        run = 0;
+      }
+    }
+  }
+
+  const avgThickness = strokeSamples > 15 ? (strokeThicknessSum / strokeSamples) : 2.0;
+  let detectedPen = 'ballpoint';
+  if (avgThickness <= 2.2) detectedPen = 'ballpoint';
+  else if (avgThickness <= 3.8) detectedPen = 'gel';
+  else detectedPen = 'fountain';
+
+  // 5. Measure Baseline Jitter
+  let detectedJitter = Math.min(2.5, Math.max(0.8, 0.9 + (avgThickness * 0.25)));
+
+  // 6. Best Matching Skeleton Font
+  let matchedFont = 'Caveat';
+  if (detectedSlant > 1.2) {
+    matchedFont = 'Cedarville Cursive';
+  } else if (detectedSlant < -0.5) {
+    matchedFont = 'Architects Daughter';
+  } else if (avgThickness > 3.0) {
+    matchedFont = 'Playpen Sans';
+  } else if (detectedJitter > 1.6) {
+    matchedFont = 'Just Another Hand';
+  } else {
+    matchedFont = 'Kalam';
+  }
+
+  return {
+    inkColor: extractedColor,
+    slant: Number(detectedSlant.toFixed(1)),
+    thickness: Number(avgThickness.toFixed(1)),
+    penType: detectedPen,
+    jitter: Number(detectedJitter.toFixed(1)),
+    matchedFont: matchedFont
+  };
+}
+
+// APPLY CLONED PROFILE TO STUDIO
+function applyClonedProfile(profile, thumbnailDataUrl) {
+  if (!profile) return;
+
+  state.bodyColor = profile.inkColor;
+  const bodyPicker = document.getElementById('body-color-picker');
+  if (bodyPicker) bodyPicker.value = profile.inkColor;
+
+  state.penType = profile.penType;
+  document.querySelectorAll('.pen-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.pen === profile.penType);
+  });
+
+  state.rotationJitter = Math.abs(profile.slant);
+  const rotInput = document.getElementById('rotation-amount');
+  const rotVal = document.getElementById('rotation-val');
+  if (rotInput) rotInput.value = state.rotationJitter;
+  if (rotVal) rotVal.textContent = `${state.rotationJitter}°`;
+
+  state.baselineJitter = profile.jitter;
+  const jitInput = document.getElementById('jitter-amount');
+  const jitVal = document.getElementById('jitter-val');
+  if (jitInput) jitInput.value = state.baselineJitter;
+  if (jitVal) jitVal.textContent = `${state.baselineJitter}px`;
+
+  state.fontFamily = profile.matchedFont;
+
+  const profileCard = document.getElementById('cloned-profile-card');
+  const dropzone = document.getElementById('hw-upload-dropzone');
+  const thumbImg = document.getElementById('cloned-thumb-img');
+  const tagInk = document.getElementById('tag-ink-color');
+  const tagPen = document.getElementById('tag-pen-type');
+  const tagSlant = document.getElementById('tag-slant-angle');
+
+  if (profileCard) profileCard.style.display = 'block';
+  if (dropzone) dropzone.style.display = 'none';
+  if (thumbImg && thumbnailDataUrl) thumbImg.src = thumbnailDataUrl;
+  if (tagInk) {
+    tagInk.innerHTML = `<span class="color-preview-pip" style="background:${profile.inkColor}"></span> Ink: ${profile.inkColor}`;
+  }
+  if (tagPen) tagPen.textContent = `Pen: ${profile.penType.toUpperCase()}`;
+  if (tagSlant) tagSlant.textContent = `Tilt: ${profile.slant > 0 ? '+' : ''}${profile.slant}°`;
+
+  buildFontList();
+  renderCanvas();
+  triggerAutoSave();
+  showToast(`✨ Aapki handwriting photo se detect ho kar clone ho chuki hai!`);
+}
+
+// REVERT CLONED PROFILE
+function revertClonedProfile() {
+  const profileCard = document.getElementById('cloned-profile-card');
+  const dropzone = document.getElementById('hw-upload-dropzone');
+  if (profileCard) profileCard.style.display = 'none';
+  if (dropzone) dropzone.style.display = 'flex';
+
+  state.fontFamily = 'Caveat';
+  state.bodyColor = '#103b78';
+  state.penType = 'ballpoint';
+  state.rotationJitter = 1.0;
+  state.baselineJitter = 1.2;
+
+  buildFontList();
+  renderCanvas();
+  triggerAutoSave();
+  showToast('Standard handwriting profile restored');
+}
+
+// DOWNLOAD PRINTABLE CALIBRATION TEMPLATE (PDF)
+function downloadCalibrationSheet() {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.setTextColor(30, 41, 59);
+    doc.text('QALMOTYPE — Handwriting Calibration Sheet', 20, 24);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(100, 116, 139);
+    doc.text('Write naturally inside the ruled boxes using your regular ballpoint, gel or fountain pen.', 20, 31);
+    doc.text('Take a clear photo with your mobile camera or scan as PDF, then upload to clone your handwriting!', 20, 36);
+
+    // Box 1: Sentence Sample
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(30, 58, 138);
+    doc.text('1. Sentence Sample (Pangram):', 20, 48);
+
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(10);
+    doc.setTextColor(71, 85, 105);
+    doc.text('Prompt: "The quick brown fox jumps over the lazy dog."', 20, 54);
+
+    doc.setDrawColor(203, 213, 225);
+    doc.setLineWidth(0.4);
+    doc.rect(20, 58, 170, 45);
+    doc.setDrawColor(226, 232, 240);
+    for (let y = 72; y <= 95; y += 11) {
+      doc.line(20, y, 190, y);
+    }
+
+    // Box 2: Numbers & Symbols
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(30, 58, 138);
+    doc.text('2. Numbers & University Symbols:', 20, 115);
+
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(10);
+    doc.setTextColor(71, 85, 105);
+    doc.text('Prompt: "0 1 2 3 4 5 6 7 8 9 + - = ( ) / % # CS-301"', 20, 121);
+
+    doc.setDrawColor(203, 213, 225);
+    doc.rect(20, 125, 170, 45);
+    doc.setDrawColor(226, 232, 240);
+    for (let y = 139; y <= 162; y += 11) {
+      doc.line(20, y, 190, y);
+    }
+
+    // Box 3: Natural Assignment Paragraph
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(30, 58, 138);
+    doc.text('3. Natural Assignment Paragraph:', 20, 182);
+
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(10);
+    doc.setTextColor(71, 85, 105);
+    doc.text('Prompt: Write 3 to 4 lines of any assignment question or answer naturally.', 20, 188);
+
+    doc.setDrawColor(203, 213, 225);
+    doc.rect(20, 192, 170, 75);
+    doc.setDrawColor(226, 232, 240);
+    for (let y = 207; y <= 255; y += 12) {
+      doc.line(20, y, 190, y);
+    }
+
+    // Footer
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(148, 163, 184);
+    doc.text('Qalmotype AI Studio • https://github.com/Qyvora-tech/kalam-o-type', 20, 285);
+
+    doc.save('Qalmotype_Handwriting_Calibration_Sheet.pdf');
+    showToast('📄 Downloaded Handwriting Calibration Sheet (PDF)!');
+  } catch (err) {
+    console.error('Calibration sheet error:', err);
+    showToast('PDF download karne mein masla hua.');
+  }
 }

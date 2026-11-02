@@ -1615,6 +1615,265 @@ body.zen-mode .preview-toolbar {
 }
 
 /* ==========================================================================
+   AI HANDWRITING CLONER & SCANNER MODAL
+   ========================================================================== */
+.cloned-profile-box {
+  margin-top: 14px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  animation: fadeIn 0.25s ease;
+}
+
+.cloned-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cloned-thumb-wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.cloned-thumb-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cloned-profile-details {
+  flex: 1;
+}
+
+.cloned-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.cloned-meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.cloned-tag {
+  font-size: 10px;
+  font-weight: 600;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 2px 7px;
+  border-radius: 12px;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.color-preview-pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #103b78;
+  display: inline-block;
+}
+
+.cloned-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.template-helper-row {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.btn-text-link {
+  background: none;
+  border: none;
+  color: #4f46e5;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: underline;
+  transition: color 0.15s;
+}
+
+.btn-text-link:hover {
+  color: #3730a3;
+}
+
+/* SCANNER MODAL BACKDROP */
+.scanner-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.scanner-modal-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.scanner-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scanner-modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-icon-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.btn-icon-close:hover {
+  color: var(--text-primary);
+  background: #f1f5f9;
+}
+
+.scanner-preview-container {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  background: #0f172a;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scanner-preview-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+/* LASER SCANNER BEAM ANIMATION */
+.scanner-laser-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #06b6d4;
+  box-shadow: 0 0 16px 4px #06b6d4, 0 0 30px 8px rgba(6, 182, 212, 0.5);
+  animation: laserSweep 1.6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes laserSweep {
+  0% {
+    top: 5%;
+  }
+  100% {
+    top: 92%;
+  }
+}
+
+.scanner-status-box {
+  padding: 20px;
+}
+
+.scanner-step-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  min-height: 20px;
+}
+
+.scanner-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.scanner-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #06b6d4);
+  transition: width 0.35s ease;
+}
+
+.scanner-metrics {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.metric-item {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  justify-content: center;
+}
+
+.scanner-modal-footer {
+  padding: 0 20px 20px 20px;
+}
+
+/* ==========================================================================
    RESPONSIVE DESIGN (TABLETS & PHONES)
    ========================================================================== */
 @media (max-width: 1100px) {
