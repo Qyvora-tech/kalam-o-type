@@ -505,11 +505,11 @@ function cleanAiText() {
 function fitPageToScreen() {
   const viewport = document.getElementById('canvas-viewport');
   if (!viewport || viewport.clientHeight === 0) return;
-  const availableHeight = viewport.clientHeight - 48;
-  const availableWidth = viewport.clientWidth - 48;
+  const availableHeight = viewport.clientHeight - 36;
+  const availableWidth = viewport.clientWidth - 28;
   const scaleY = availableHeight / 934;
   const scaleX = availableWidth / 660;
-  state.zoom = Math.max(0.65, Math.min(scaleX, scaleY, 1.35));
+  state.zoom = Math.max(0.28, Math.min(scaleX, scaleY, 1.35));
   applyZoom();
 }
 
@@ -1168,6 +1168,132 @@ function setupEventListeners() {
       toggleZenMode();
     }
   });
+
+  // Mobile / Tablet View Dock Navigation
+  const btnMobileEdit = document.getElementById('btn-mobile-edit');
+  const btnMobilePreview = document.getElementById('btn-mobile-preview');
+  const btnMobileTools = document.getElementById('btn-mobile-tools');
+  const actionsSheetModal = document.getElementById('actions-sheet-modal');
+  const btnCloseActionsSheet = document.getElementById('btn-close-actions-sheet');
+  const btnMoreActions = document.getElementById('btn-more-actions');
+
+  function openActionsSheet() {
+    if (actionsSheetModal) actionsSheetModal.style.display = 'flex';
+  }
+
+  function closeActionsSheet() {
+    if (actionsSheetModal) actionsSheetModal.style.display = 'none';
+  }
+
+  if (btnMobileEdit) {
+    btnMobileEdit.addEventListener('click', () => {
+      document.body.classList.remove('mobile-show-preview');
+      document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+      btnMobileEdit.classList.add('active');
+    });
+  }
+
+  if (btnMobilePreview) {
+    btnMobilePreview.addEventListener('click', () => {
+      document.body.classList.add('mobile-show-preview');
+      document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+      btnMobilePreview.classList.add('active');
+      setTimeout(fitPageToScreen, 120);
+    });
+  }
+
+  if (btnMobileTools) {
+    btnMobileTools.addEventListener('click', openActionsSheet);
+  }
+
+  if (btnMoreActions) {
+    btnMoreActions.addEventListener('click', openActionsSheet);
+  }
+
+  if (btnCloseActionsSheet) {
+    btnCloseActionsSheet.addEventListener('click', closeActionsSheet);
+  }
+
+  if (actionsSheetModal) {
+    actionsSheetModal.addEventListener('click', (e) => {
+      if (e.target === actionsSheetModal) {
+        closeActionsSheet();
+      }
+    });
+  }
+
+  // Sheet action triggers
+  const sheetBtnCopy = document.getElementById('sheet-btn-copy');
+  if (sheetBtnCopy) {
+    sheetBtnCopy.addEventListener('click', () => {
+      closeActionsSheet();
+      copyCurrentPageImage();
+    });
+  }
+
+  const sheetBtnPng = document.getElementById('sheet-btn-png');
+  if (sheetBtnPng) {
+    sheetBtnPng.addEventListener('click', () => {
+      closeActionsSheet();
+      downloadCurrentPageImage();
+    });
+  }
+
+  const sheetBtnPdf = document.getElementById('sheet-btn-pdf');
+  if (sheetBtnPdf) {
+    sheetBtnPdf.addEventListener('click', () => {
+      closeActionsSheet();
+      downloadFullPDF();
+    });
+  }
+
+  const sheetBtnZip = document.getElementById('sheet-btn-zip');
+  if (sheetBtnZip) {
+    sheetBtnZip.addEventListener('click', () => {
+      closeActionsSheet();
+      downloadAllPagesAsZip();
+    });
+  }
+
+  const sheetBtnPrint = document.getElementById('sheet-btn-print');
+  if (sheetBtnPrint) {
+    sheetBtnPrint.addEventListener('click', () => {
+      closeActionsSheet();
+      const printBtn = document.getElementById('btn-print');
+      if (printBtn) printBtn.click();
+    });
+  }
+
+  const sheetBtnSample = document.getElementById('sheet-btn-sample');
+  if (sheetBtnSample) {
+    sheetBtnSample.addEventListener('click', () => {
+      closeActionsSheet();
+      const sampleBtn = document.getElementById('btn-sample');
+      if (sampleBtn) sampleBtn.click();
+    });
+  }
+
+  const sheetBtnCleanAi = document.getElementById('sheet-btn-clean-ai');
+  if (sheetBtnCleanAi) {
+    sheetBtnCleanAi.addEventListener('click', () => {
+      closeActionsSheet();
+      cleanAiText();
+    });
+  }
+
+  const sheetDocInput = document.getElementById('sheet-doc-input');
+  if (sheetDocInput) {
+    sheetDocInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        processImportedDocument(e.target.files[0]);
+        closeActionsSheet();
+      }
+    });
+  }
+
+  window.addEventListener('orientationchange', () => {
+    setTimeout(fitPageToScreen, 200);
+  });
 }
 
 // APPLY 1-CLICK PRESET
@@ -1326,6 +1452,10 @@ function paginateAllPages() {
   if (pageIndicator) {
     pageIndicator.textContent = `${state.totalPages} ${state.totalPages === 1 ? 'Page' : 'Pages'}`;
   }
+  const mobilePill = document.getElementById('mobile-page-pill');
+  if (mobilePill) {
+    mobilePill.textContent = state.totalPages;
+  }
 
   return pages;
 }
@@ -1442,34 +1572,55 @@ let currentStroke = [];
 let currentDrawCanvas = null;
 let currentDrawPageNum = 1;
 
+function endDrawing() {
+  if (isDrawing && state.drawMode && currentStroke.length > 0) {
+    if (!state.pageDrawings[currentDrawPageNum]) {
+      state.pageDrawings[currentDrawPageNum] = [];
+    }
+    state.pageDrawings[currentDrawPageNum].push(currentStroke);
+    currentStroke = [];
+  }
+  isDrawing = false;
+}
+
+window.addEventListener('mouseup', endDrawing);
+window.addEventListener('touchend', endDrawing);
+window.addEventListener('touchcancel', endDrawing);
+
 function setupDrawingHandlers(sheet, pageNum) {
   const canvasEl = sheet.querySelector('canvas');
   if (!canvasEl || canvasEl.dataset.drawBound) return;
   canvasEl.dataset.drawBound = 'true';
 
-  canvasEl.addEventListener('mousedown', (e) => {
+  function getCanvasPos(e) {
+    const rect = canvasEl.getBoundingClientRect();
+    const scaleX = 1240 / rect.width;
+    const scaleY = 1754 / rect.height;
+    const touch = e.touches ? e.touches[0] : e;
+    return {
+      x: (touch.clientX - rect.left) * scaleX,
+      y: (touch.clientY - rect.top) * scaleY
+    };
+  }
+
+  function onPointerDown(e) {
     if (!state.drawMode) return;
+    if (e.touches && e.touches.length > 1) return;
+    if (e.cancelable) e.preventDefault();
     isDrawing = true;
     currentDrawCanvas = canvasEl;
     currentDrawPageNum = pageNum;
     currentStroke = [];
+    const pt = getCanvasPos(e);
+    currentStroke.push(pt);
+  }
 
-    const rect = canvasEl.getBoundingClientRect();
-    const scaleX = 1240 / rect.width;
-    const scaleY = 1754 / rect.height;
-    const x = (e.clientX - rect.left) * scaleX;
-    const y = (e.clientY - rect.top) * scaleY;
-    currentStroke.push({ x, y });
-  });
-
-  canvasEl.addEventListener('mousemove', (e) => {
+  function onPointerMove(e) {
     if (!isDrawing || !state.drawMode || currentDrawCanvas !== canvasEl) return;
-    const rect = canvasEl.getBoundingClientRect();
-    const scaleX = 1240 / rect.width;
-    const scaleY = 1754 / rect.height;
-    const x = (e.clientX - rect.left) * scaleX;
-    const y = (e.clientY - rect.top) * scaleY;
-    currentStroke.push({ x, y });
+    if (e.touches && e.touches.length > 1) return;
+    if (e.cancelable) e.preventDefault();
+    const pt = getCanvasPos(e);
+    currentStroke.push(pt);
 
     const pCtx = canvasEl.getContext('2d');
     pCtx.save();
@@ -1480,22 +1631,18 @@ function setupDrawingHandlers(sheet, pageNum) {
     pCtx.beginPath();
     const prev = currentStroke[currentStroke.length - 2];
     pCtx.moveTo(prev.x, prev.y);
-    pCtx.lineTo(x, y);
+    pCtx.lineTo(pt.x, pt.y);
     pCtx.stroke();
     pCtx.restore();
-  });
+  }
 
-  window.addEventListener('mouseup', () => {
-    if (isDrawing && state.drawMode && currentStroke.length > 0) {
-      isDrawing = false;
-      if (!state.pageDrawings[currentDrawPageNum]) {
-        state.pageDrawings[currentDrawPageNum] = [];
-      }
-      state.pageDrawings[currentDrawPageNum].push(currentStroke);
-      currentStroke = [];
-    }
-    isDrawing = false;
-  });
+  // Mouse events
+  canvasEl.addEventListener('mousedown', onPointerDown);
+  canvasEl.addEventListener('mousemove', onPointerMove);
+
+  // Touch / Stylus events for iPad & mobile
+  canvasEl.addEventListener('touchstart', onPointerDown, { passive: false });
+  canvasEl.addEventListener('touchmove', onPointerMove, { passive: false });
 }
 
 // PROCESS IMPORTED DOCUMENT (.docx, .txt, .md)

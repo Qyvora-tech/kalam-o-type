@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>Qalmotype - Natural Penmanship & Assignment Studio</title>
   <link rel="icon" type="image/png" href="icon.png">
   
@@ -59,27 +59,31 @@
 
       <div class="header-actions">
         <!-- IMPORT DOCUMENT BUTTON -->
-        <label class="btn btn-outline btn-sm" style="cursor:pointer;" title="Import Word (.docx) or Text (.txt) file">
+        <label class="btn btn-outline btn-sm action-import-btn" style="cursor:pointer;" title="Import Word (.docx) or Text (.txt) file">
           <input type="file" id="doc-file-input" accept=".docx,.txt,.md" style="display:none;">
           <i class="fa-solid fa-file-import"></i> <span>Import Doc</span>
         </label>
-        <button id="btn-sample-text" class="btn btn-ghost" title="Load sample assignment">
+        <button id="btn-sample-text" class="btn btn-ghost action-hide-mobile" title="Load sample assignment">
           <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Sample</span>
         </button>
-        <button id="btn-copy-img" class="btn btn-ghost" title="Copy current page to clipboard (Ctrl+V into Word / WhatsApp)">
+        <button id="btn-copy-img" class="btn btn-ghost action-hide-mobile" title="Copy current page to clipboard (Ctrl+V into Word / WhatsApp)">
           <i class="fa-regular fa-copy"></i> <span>Copy Page</span>
         </button>
-        <button id="btn-print" class="btn btn-ghost" title="Print directly to printer">
+        <button id="btn-print" class="btn btn-ghost action-hide-mobile" title="Print directly to printer">
           <i class="fa-solid fa-print"></i> <span>Print</span>
         </button>
-        <button id="btn-download-img" class="btn btn-outline" title="Download current page as high-res PNG">
+        <button id="btn-download-img" class="btn btn-outline action-btn-compact" title="Download current page as high-res PNG">
           <i class="fa-solid fa-image"></i> <span>Save PNG</span>
         </button>
-        <button id="btn-download-zip" class="btn btn-outline" title="Download all pages as ZIP archive">
+        <button id="btn-download-zip" class="btn btn-outline action-hide-mobile" title="Download all pages as ZIP archive">
           <i class="fa-solid fa-file-zipper"></i> <span>Export ZIP</span>
         </button>
-        <button id="btn-download-pdf" class="btn btn-primary" title="Export complete multi-page PDF">
+        <button id="btn-download-pdf" class="btn btn-primary action-btn-compact" title="Export complete multi-page PDF">
           <i class="fa-solid fa-file-pdf"></i> <span>Download PDF</span>
+        </button>
+        <!-- MOBILE / TABLET MORE ACTIONS MENU BUTTON -->
+        <button id="btn-more-actions" class="btn btn-icon action-show-mobile" title="More Tools & Export Options">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
       </div>
     </header>
@@ -703,6 +707,78 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
         </div>
       </div>
     </div>
+
+    <!-- MOBILE / RESPONSIVE ACTIONS BOTTOM SHEET -->
+    <div class="actions-sheet-backdrop" id="actions-sheet-modal" style="display:none;">
+      <div class="actions-sheet">
+        <div class="actions-sheet-header">
+          <div class="actions-sheet-drag-pill"></div>
+          <div class="actions-sheet-title-row">
+            <span class="actions-sheet-title"><i class="fa-solid fa-shapes"></i> Studio Tools & Export</span>
+            <button id="btn-close-actions-sheet" class="btn-icon-close" title="Close"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+        <div class="actions-sheet-grid">
+          <button class="sheet-action-item" id="sheet-btn-copy">
+            <div class="sheet-icon"><i class="fa-regular fa-copy"></i></div>
+            <strong>Copy Page</strong>
+            <small>Direct to clipboard</small>
+          </button>
+          <button class="sheet-action-item" id="sheet-btn-png">
+            <div class="sheet-icon"><i class="fa-solid fa-image"></i></div>
+            <strong>Save PNG</strong>
+            <small>High-res page image</small>
+          </button>
+          <button class="sheet-action-item" id="sheet-btn-pdf">
+            <div class="sheet-icon"><i class="fa-solid fa-file-pdf"></i></div>
+            <strong>Download PDF</strong>
+            <small>Full multi-page A4</small>
+          </button>
+          <button class="sheet-action-item" id="sheet-btn-zip">
+            <div class="sheet-icon"><i class="fa-solid fa-file-zipper"></i></div>
+            <strong>Export ZIP</strong>
+            <small>All pages archive</small>
+          </button>
+          <button class="sheet-action-item" id="sheet-btn-print">
+            <div class="sheet-icon"><i class="fa-solid fa-print"></i></div>
+            <strong>Print</strong>
+            <small>Physical printer</small>
+          </button>
+          <button class="sheet-action-item" id="sheet-btn-sample">
+            <div class="sheet-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <strong>Sample Text</strong>
+            <small>Load demo assignment</small>
+          </button>
+          <button class="sheet-action-item" id="sheet-btn-clean-ai">
+            <div class="sheet-icon"><i class="fa-solid fa-broom"></i></div>
+            <strong>Clean AI Text</strong>
+            <small>Remove robot words</small>
+          </button>
+          <label class="sheet-action-item" style="cursor:pointer;">
+            <input type="file" id="sheet-doc-input" accept=".docx,.txt,.md" style="display:none;">
+            <div class="sheet-icon"><i class="fa-solid fa-file-import"></i></div>
+            <strong>Import Doc</strong>
+            <small>Word / Text file</small>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE VIEW TOGGLE DOCK (Visible on mobile screens <= 900px) -->
+    <nav class="mobile-nav-bar" id="mobile-nav-bar">
+      <button class="mobile-nav-btn active" id="btn-mobile-edit" data-view="editor">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Editor & Hand</span>
+      </button>
+      <button class="mobile-nav-btn" id="btn-mobile-preview" data-view="preview">
+        <i class="fa-solid fa-book-open"></i>
+        <span>Pages Preview <span class="mobile-page-pill" id="mobile-page-pill">1</span></span>
+      </button>
+      <button class="mobile-nav-btn" id="btn-mobile-tools" data-view="tools">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Actions & Export</span>
+      </button>
+    </nav>
 
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div class="toast-container" id="toast-container"></div>
