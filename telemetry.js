@@ -232,6 +232,28 @@
         if (banner) banner.remove();
       }
 
+      // Full Maintenance Mode Screen
+      if (config.maintenanceMode) {
+        let mScreen = document.getElementById('qalmotype-maintenance-screen');
+        if (!mScreen) {
+          mScreen = document.createElement('div');
+          mScreen.id = 'qalmotype-maintenance-screen';
+          mScreen.style.cssText = 'position:fixed;inset:0;background:#090d16;color:#fff;z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:"Plus Jakarta Sans",sans-serif;';
+          mScreen.innerHTML = `
+            <div style="width:72px;height:72px;background:rgba(99,102,241,0.15);border:1px solid #6366f1;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#818cf8;margin-bottom:20px;">
+              <i class="fa-solid fa-wrench"></i>
+            </div>
+            <h1 style="font-size:26px;font-weight:800;margin-bottom:10px;">Qalmotype Studio is Under Maintenance</h1>
+            <p style="font-size:14px;color:#94a3b8;max-width:480px;line-height:1.6;margin-bottom:24px;">We are currently upgrading our handwritten rendering servers and LaTeX math engines. We will be back online shortly!</p>
+            <span style="font-size:12px;color:#64748b;">Administrator? Press <b>Ctrl + Alt + A</b> to access portal.</span>
+          `;
+          document.body.appendChild(mScreen);
+        }
+      } else {
+        const mScreen = document.getElementById('qalmotype-maintenance-screen');
+        if (mScreen) mScreen.remove();
+      }
+
       // Feature Flag: Handwriting Cloner
       const clonerCard = document.getElementById('clone-panel-card');
       if (clonerCard && config.disableCloner !== undefined) {
@@ -245,6 +267,18 @@
     await resolveGeolocation();
     updateHeartbeat();
     checkRemoteConfig();
+
+    // Check for pending AI assignment pushed from admin sandbox
+    const pendingText = localStorage.getItem('qalmotype_pending_assignment');
+    if (pendingText) {
+      const txtEl = document.getElementById('input-text');
+      if (txtEl) {
+        txtEl.value = pendingText;
+        txtEl.dispatchEvent(new Event('input'));
+        localStorage.removeItem('qalmotype_pending_assignment');
+      }
+    }
+
     // Heartbeat every 12 seconds
     setInterval(updateHeartbeat, 12000);
     // Periodically re-check feature flags

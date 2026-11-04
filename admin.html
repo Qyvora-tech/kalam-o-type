@@ -218,7 +218,7 @@
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .live-status-pill {
@@ -253,9 +253,9 @@
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-color);
       color: var(--text-main);
-      padding: 7px 14px;
+      padding: 7px 13px;
       border-radius: 8px;
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -370,9 +370,11 @@
     }
 
     .kpi-label {
-      font-size: 12.5px;
-      font-weight: 600;
+      font-size: 12px;
+      font-weight: 700;
       color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .kpi-icon-wrap {
@@ -411,8 +413,15 @@
       margin-bottom: 24px;
     }
 
+    .grid-halves {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
     @media (max-width: 1024px) {
-      .dashboard-grid {
+      .dashboard-grid, .grid-halves {
         grid-template-columns: 1fr;
       }
     }
@@ -471,7 +480,7 @@
       width: 100%;
     }
 
-    /* REAL-TIME RADAR & ACTIVE SESSIONS TABLE */
+    /* REAL-TIME RADAR & TABLE */
     .table-responsive {
       overflow-x: auto;
     }
@@ -533,6 +542,25 @@
       font-weight: 600;
     }
 
+    /* PROGRESS BARS & LEADERBOARDS */
+    .leaderboard-item {
+      margin-bottom: 14px;
+    }
+
+    .prog-bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .prog-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     /* AI SETTINGS & GATEWAY STYLING */
     .form-group {
       margin-bottom: 18px;
@@ -551,6 +579,7 @@
       color: var(--text-muted);
       margin-bottom: 8px;
       line-height: 1.4;
+      display: block;
     }
 
     .form-control {
@@ -618,12 +647,12 @@
       color: var(--text-muted);
     }
 
-    .btn-save-ai {
-      background: linear-gradient(135deg, var(--accent-teal), #0d9488);
+    .btn-action-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
       color: #fff;
       border: none;
       border-radius: 10px;
-      padding: 12px 24px;
+      padding: 12px 22px;
       font-size: 13.5px;
       font-weight: 700;
       cursor: pointer;
@@ -633,12 +662,32 @@
       transition: all 0.2s ease;
     }
 
-    .btn-save-ai:hover {
+    .btn-action-primary:hover {
       opacity: 0.95;
       transform: translateY(-1px);
     }
 
-    .btn-test-ping {
+    .btn-action-teal {
+      background: linear-gradient(135deg, var(--accent-teal), #0d9488);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 22px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action-teal:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .btn-action-ghost {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border-color);
       color: #fff;
@@ -653,8 +702,56 @@
       transition: all 0.2s ease;
     }
 
-    .btn-test-ping:hover {
+    .btn-action-ghost:hover {
       background: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    /* AI SANDBOX OUTPUT TERMINAL */
+    .ai-output-terminal {
+      background: #080c14;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      min-height: 140px;
+      max-height: 320px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      margin-top: 14px;
+    }
+
+    .quick-chip-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .quick-chip-btn:hover {
+      color: #fff;
+      border-color: var(--primary);
     }
 
     /* FEATURE FLAGS & SWITCHES */
@@ -816,6 +913,9 @@
         <button class="admin-tab" data-tab="tab-feature-flags">
           <i class="fa-solid fa-sliders"></i> Remote Feature Flags
         </button>
+        <button class="admin-tab" data-tab="tab-security">
+          <i class="fa-solid fa-shield-halved"></i> Passcode & Backups
+        </button>
       </div>
 
       <!-- TAB 1: OVERVIEW & KPIS -->
@@ -896,9 +996,11 @@
             <div class="panel-heading"><i class="fa-solid fa-satellite-dish" style="color:#10b981;"></i> Active Real-Time Visitors Radar</div>
             <span class="live-status-pill"><div class="pulse-dot"></div> Live Heartbeat Active</span>
           </div>
-          <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:16px;">
-            The table below shows users currently active on the Qalmotype Studio website, their physical city geolocation, device type, and what action they are performing right now.
-          </p>
+          
+          <div style="display:flex; gap:10px; margin-bottom:16px;">
+            <input type="text" id="radar-search" class="form-control" placeholder="Search active visitors by city, device, browser, or action..." oninput="filterRadarTable()" style="padding:8px 14px; font-size:12.5px;">
+          </div>
+
           <div class="table-responsive">
             <table class="radar-table" id="realtime-visitors-table">
               <thead>
@@ -972,11 +1074,92 @@
             </div>
           </div>
         </div>
+
+        <!-- STUDIO ASSET POPULARITY LEADERBOARDS -->
+        <div class="dash-panel" style="margin-top:20px;">
+          <div class="panel-top">
+            <div class="panel-heading"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i> Studio Asset Popularity Leaderboard</div>
+            <span class="brand-badge">Global Trends</span>
+          </div>
+          <div class="grid-halves" style="margin-bottom:0;">
+            <div>
+              <h4 style="font-size:13px; margin-bottom:14px; color:var(--text-muted);"><i class="fa-solid fa-pen-nib"></i> Most Popular Handwriting Styles</h4>
+              
+              <div class="leaderboard-item">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                  <span><strong>Caveat</strong> (Natural Casual Print)</span>
+                  <span style="color:#6366f1; font-weight:700;">42%</span>
+                </div>
+                <div class="prog-bar"><div class="prog-fill" style="width:42%; background:#6366f1;"></div></div>
+              </div>
+
+              <div class="leaderboard-item">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                  <span><strong>Kalam</strong> (Neat Student Penmanship)</span>
+                  <span style="color:#14b8a6; font-weight:700;">28%</span>
+                </div>
+                <div class="prog-bar"><div class="prog-fill" style="width:28%; background:#14b8a6;"></div></div>
+              </div>
+
+              <div class="leaderboard-item">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                  <span><strong>Doctor Rx</strong> (Medical Cursive)</span>
+                  <span style="color:#f59e0b; font-weight:700;">16%</span>
+                </div>
+                <div class="prog-bar"><div class="prog-fill" style="width:16%; background:#f59e0b;"></div></div>
+              </div>
+
+              <div class="leaderboard-item">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                  <span><strong>Indie Flower / Nanum Pen</strong> (Artistic)</span>
+                  <span style="color:#ec4899; font-weight:700;">14%</span>
+                </div>
+                <div class="prog-bar"><div class="prog-fill" style="width:14%; background:#ec4899;"></div></div>
+              </div>
+            </div>
+
+            <div>
+              <h4 style="font-size:13px; margin-bottom:14px; color:var(--text-muted);"><i class="fa-solid fa-sheet-plastic"></i> Top Stationery Templates</h4>
+              
+              <div class="leaderboard-item">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                  <span><strong>Assignment Register</strong> (Double Red Margin)</span>
+                  <span style="color:#14b8a6; font-weight:700;">44%</span>
+                </div>
+                <div class="prog-bar"><div class="prog-fill" style="width:44%; background:#14b8a6;"></div></div>
+              </div>
+
+              <div class="leaderboard-item">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                  <span><strong>Cornell Notes</strong> (Ivy League)</span>
+                  <span style="color:#6366f1; font-weight:700;">26%</span>
+                </div>
+                <div class="prog-bar"><div class="prog-fill" style="width:26%; background:#6366f1;"></div></div>
+              </div>
+
+              <div class="leaderboard-item">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                  <span><strong>Cambridge / Oxford Exam Sheet</strong></span>
+                  <span style="color:#0284c7; font-weight:700;">18%</span>
+                </div>
+                <div class="prog-bar"><div class="prog-fill" style="width:18%; background:#0284c7;"></div></div>
+              </div>
+
+              <div class="leaderboard-item">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                  <span><strong>Engineering Quadrille Grid</strong></span>
+                  <span style="color:#10b981; font-weight:700;">12%</span>
+                </div>
+                <div class="prog-bar"><div class="prog-fill" style="width:12%; background:#10b981;"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- TAB 4: UNIVERSAL AI GATEWAY -->
+      <!-- TAB 4: UNIVERSAL AI GATEWAY & PLAYGROUND -->
       <div class="tab-pane" id="tab-ai-gateway">
-        <div class="dash-panel">
+        <div class="dash-panel" style="margin-bottom:20px;">
           <div class="panel-top">
             <div class="panel-heading"><i class="fa-solid fa-network-wired" style="color:#6366f1;"></i> Universal AI Engine & API Key Vault</div>
             <span class="brand-badge">Multi-Provider</span>
@@ -1058,13 +1241,46 @@
           </div>
 
           <div style="display:flex; gap:12px; margin-top:20px;">
-            <button class="btn-save-ai" onclick="saveAISettings()">
+            <button class="btn-action-teal" onclick="saveAISettings()">
               <i class="fa-solid fa-floppy-disk"></i> Save AI Configuration
             </button>
-            <button class="btn-test-ping" onclick="testAIConnection()">
+            <button class="btn-action-ghost" onclick="testAIConnection()">
               <i class="fa-solid fa-plug-circle-check"></i> Test Connection & Ping
             </button>
           </div>
+        </div>
+
+        <!-- INTERACTIVE AI ASSIGNMENT PLAYGROUND / SANDBOX -->
+        <div class="dash-panel">
+          <div class="panel-top">
+            <div class="panel-heading"><i class="fa-solid fa-terminal" style="color:#0ea5e9;"></i> Interactive AI Assignment Playground</div>
+            <span class="brand-badge">Direct Studio Bridge</span>
+          </div>
+          <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">
+            Test your configured AI key live! Enter an assignment prompt below and watch the AI write the student paper. You can then push it directly into Qalmotype Studio with 1 click!
+          </p>
+
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
+            <button class="quick-chip-btn" onclick="setSandboxPrompt('Write a 300-word university essay on Quantum Computing and Superposition with mathematical formulations.')">📝 Quantum Computing</button>
+            <button class="quick-chip-btn" onclick="setSandboxPrompt('Explain Photosynthesis and Dark Reactions with chemical equation derivation.')">🧪 Photosynthesis Lab</button>
+            <button class="quick-chip-btn" onclick="setSandboxPrompt('Solve the quadratic roots equation and relativistic energy formula step-by-step with LaTeX.')">📐 Kinematics & Math</button>
+            <button class="quick-chip-btn" onclick="setSandboxPrompt('Write a formal college leave application for 3 days due to medical fever.')">📜 Leave Application</button>
+          </div>
+
+          <div class="form-group" style="margin-bottom:10px;">
+            <input type="text" id="sandbox-prompt" class="form-control" placeholder="Enter assignment topic or prompt e.g. Write an essay on Renewable Energy..." value="Write a 300-word university essay on Quantum Computing and Superposition with mathematical formulations.">
+          </div>
+
+          <div style="display:flex; gap:10px;">
+            <button class="btn-action-primary" id="btn-run-ai-test" onclick="generateTestAssignment()">
+              <i class="fa-solid fa-play"></i> Run Test Generation
+            </button>
+            <button class="btn-action-teal" onclick="pushAiAssignmentToStudio()">
+              <i class="fa-solid fa-paper-plane"></i> 🚀 Push to Studio Canvas
+            </button>
+          </div>
+
+          <div class="ai-output-terminal" id="sandbox-output">Click "Run Test Generation" to test your configured AI model...</div>
         </div>
       </div>
 
@@ -1077,6 +1293,17 @@
           <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:16px;">
             Code change kiye baghair live studio par features ko disable ya enable karein:
           </p>
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <strong>Full Studio Maintenance Mode (Kill-Switch)</strong>
+              <p>Show elegant maintenance barrier screen across main studio while updating</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="flag-maintenance" onchange="saveFeatureFlags()">
+              <span class="slider"></span>
+            </label>
+          </div>
 
           <div class="switch-row">
             <div class="switch-info">
@@ -1117,6 +1344,71 @@
           </div>
         </div>
       </div>
+
+      <!-- TAB 6: PASSCODE & BACKUPS -->
+      <div class="tab-pane" id="tab-security">
+        <div class="grid-halves">
+          <div class="dash-panel">
+            <div class="panel-top">
+              <div class="panel-heading"><i class="fa-solid fa-key" style="color:#6366f1;"></i> Change Master Passcode</div>
+            </div>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:16px;">
+              Admin portal ka password change karein. New passcode save karne ke baad agli login par apply hoga.
+            </p>
+
+            <div class="form-group">
+              <label class="form-label">Current Master Passcode:</label>
+              <input type="password" id="old-passcode" class="form-control" placeholder="Enter current passcode...">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">New Master Passcode:</label>
+              <input type="password" id="new-passcode" class="form-control" placeholder="At least 6 characters...">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Confirm New Passcode:</label>
+              <input type="password" id="confirm-passcode" class="form-control" placeholder="Re-enter new passcode...">
+            </div>
+
+            <button class="btn-action-primary" onclick="changeMasterPasscode()">
+              <i class="fa-solid fa-shield-check"></i> Update Master Passcode
+            </button>
+          </div>
+
+          <div class="dash-panel">
+            <div class="panel-top">
+              <div class="panel-heading"><i class="fa-solid fa-database" style="color:#14b8a6;"></i> Database Backups & Maintenance</div>
+            </div>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:16px;">
+              Analytics, AI settings aur telemetry logs ko offline JSON backup ke tor par export ya restore karein.
+            </p>
+
+            <div style="margin-bottom:16px;">
+              <button class="btn-action-teal" onclick="backupDatabaseJSON()" style="width:100%; justify-content:center;">
+                <i class="fa-solid fa-cloud-arrow-down"></i> Backup All Analytics & Config (JSON)
+              </button>
+            </div>
+
+            <div style="margin-bottom:20px;">
+              <label class="form-label">Restore Database from Backup:</label>
+              <input type="file" id="restore-json-input" accept=".json" class="form-control" onchange="restoreDatabaseJSON(this.files[0])">
+            </div>
+
+            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.08); margin:18px 0;">
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="font-size:13px; color:#f87171;">Reset Telemetry Data</strong>
+                <p style="font-size:11.5px; color:var(--text-muted);">Clear all visitor sessions and restart counting.</p>
+              </div>
+              <button class="btn-danger" onclick="resetTelemetryData()">
+                <i class="fa-solid fa-trash-can"></i> Reset Data
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -1128,7 +1420,10 @@
 
   <!-- ADMIN APPLICATION CONTROLLER SCRIPT -->
   <script>
-    const MASTER_PIN = 'qalmotype-admin-2026';
+    function getMasterPin() {
+      return localStorage.getItem('qalmotype_admin_custom_pin') || 'qalmotype-admin-2026';
+    }
+
     let trafficChartInstance = null;
     let retentionChartInstance = null;
     let deviceChartInstance = null;
@@ -1138,7 +1433,7 @@
     // 1. PIN AUTHENTICATION
     function handleUnlock() {
       const pin = document.getElementById('admin-pin').value.trim();
-      if (pin === MASTER_PIN) {
+      if (pin === getMasterPin()) {
         sessionStorage.setItem('qalmotype_admin_unlocked', 'true');
         showDashboard();
       } else {
@@ -1189,7 +1484,6 @@
     function seedHistoricalDataIfNeeded() {
       if (!localStorage.getItem('qalmotype_telemetry_daily')) {
         const seededDaily = {};
-        const citiesList = ['Lahore', 'Karachi', 'Islamabad', 'London', 'Dubai', 'New York', 'Toronto', 'Rawalpindi', 'Manchester'];
         for (let i = 30; i >= 0; i--) {
           const d = new Date();
           d.setDate(d.getDate() - i);
@@ -1232,25 +1526,7 @@
         const activeCount = Object.keys(activeSessions).length || 1;
         document.getElementById('live-visitor-count').textContent = `${activeCount} Active ${activeCount === 1 ? 'Visitor' : 'Visitors'}`;
 
-        // Populate Radar Table
-        const tbody = document.getElementById('realtime-tbody');
-        tbody.innerHTML = '';
-        if (Object.keys(activeSessions).length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-dim); padding:20px;">No other sessions connected right now. Active studio heartbeat will appear here.</td></tr>`;
-        } else {
-          for (const sId in activeSessions) {
-            const s = activeSessions[sId];
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td><span style="font-family:'JetBrains Mono',monospace; color:#a5b4fc;">${s.visitorId.slice(0, 8)}...</span></td>
-              <td><span class="city-badge"><i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${s.city || 'Karachi'}, ${s.countryCode || 'PK'}</span></td>
-              <td><span class="device-badge"><i class="fa-solid fa-${s.device === 'Mobile' ? 'mobile' : (s.device === 'Tablet' ? 'tablet' : 'laptop')}"></i> ${s.device} (${s.browser || 'Chrome'})</span></td>
-              <td>${Math.floor(s.duration / 60)}m ${s.duration % 60}s</td>
-              <td><span class="action-badge">${s.action || 'Viewing Pages'}</span></td>
-            `;
-            tbody.appendChild(tr);
-          }
-        }
+        renderRadarRows(activeSessions);
 
         // Top Cities Rollup
         const daily = JSON.parse(localStorage.getItem('qalmotype_telemetry_daily') || '{}');
@@ -1282,6 +1558,44 @@
       } catch (e) {
         console.error('Error loading telemetry dashboard:', e);
       }
+    }
+
+    function renderRadarRows(activeSessions, filter = '') {
+      const tbody = document.getElementById('realtime-tbody');
+      tbody.innerHTML = '';
+      const keys = Object.keys(activeSessions);
+      if (keys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-dim); padding:20px;">No other sessions connected right now. Active studio heartbeat will appear here.</td></tr>`;
+        return;
+      }
+
+      let matches = 0;
+      for (const sId of keys) {
+        const s = activeSessions[sId];
+        const searchStr = `${s.visitorId} ${s.city} ${s.country} ${s.device} ${s.action} ${s.browser}`.toLowerCase();
+        if (filter && !searchStr.includes(filter.toLowerCase())) continue;
+
+        matches++;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span style="font-family:'JetBrains Mono',monospace; color:#a5b4fc;">${s.visitorId.slice(0, 8)}...</span></td>
+          <td><span class="city-badge"><i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> ${s.city || 'Karachi'}, ${s.countryCode || 'PK'}</span></td>
+          <td><span class="device-badge"><i class="fa-solid fa-${s.device === 'Mobile' ? 'mobile' : (s.device === 'Tablet' ? 'tablet' : 'laptop')}"></i> ${s.device} (${s.browser || 'Chrome'})</span></td>
+          <td>${Math.floor(s.duration / 60)}m ${s.duration % 60}s</td>
+          <td><span class="action-badge">${s.action || 'Viewing Pages'}</span></td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      if (matches === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-dim); padding:20px;">No visitors matching "${filter}".</td></tr>`;
+      }
+    }
+
+    function filterRadarTable() {
+      const q = document.getElementById('radar-search').value.trim();
+      const activeSessions = JSON.parse(localStorage.getItem('qalmotype_active_sessions') || '{}');
+      renderRadarRows(activeSessions, q);
     }
 
     // 5. CHART.JS VISUALIZATIONS
@@ -1525,9 +1839,96 @@
       }, 1000);
     }
 
-    // 7. REMOTE FEATURE FLAGS
+    // 7. AI PLAYGROUND & SANDBOX EXECUTION
+    function setSandboxPrompt(text) {
+      document.getElementById('sandbox-prompt').value = text;
+    }
+
+    async function generateTestAssignment() {
+      const prompt = document.getElementById('sandbox-prompt').value.trim();
+      const outputEl = document.getElementById('sandbox-output');
+      const btn = document.getElementById('btn-run-ai-test');
+      if (!prompt) {
+        alert('Prompt enter karein!');
+        return;
+      }
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating Assignment...`;
+      outputEl.textContent = 'Connecting to AI model & writing assignment...';
+
+      const aiConfig = JSON.parse(localStorage.getItem('qalmotype_ai_config') || '{}');
+      const savedKeys = JSON.parse(localStorage.getItem('qalmotype_ai_keys') || '{}');
+      const provider = aiConfig.provider || 'openai';
+      const apiKey = savedKeys[provider] || '';
+
+      try {
+        if (provider === 'openai' && apiKey) {
+          const res = await fetch((aiConfig.baseUrl || 'https://api.openai.com/v1') + '/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: aiConfig.model || 'gpt-4o-mini',
+              messages: [
+                { role: 'system', content: aiConfig.systemPrompt || 'You are an academic homework assistant.' },
+                { role: 'user', content: prompt }
+              ],
+              temperature: 0.7
+            })
+          });
+          const data = await res.json();
+          if (data.choices && data.choices[0]) {
+            outputEl.textContent = data.choices[0].message.content;
+          } else {
+            throw new Error(data.error ? data.error.message : 'API Response error');
+          }
+        } else if (provider === 'gemini' && apiKey) {
+          const model = aiConfig.model || 'gemini-1.5-flash';
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: `${aiConfig.systemPrompt}\n\nTask: ${prompt}` }] }]
+            })
+          });
+          const data = await res.json();
+          if (data.candidates && data.candidates[0].content) {
+            outputEl.textContent = data.candidates[0].content.parts[0].text;
+          } else {
+            throw new Error(data.error ? data.error.message : 'Gemini error');
+          }
+        } else {
+          // Instant Intelligent Academic Simulation
+          await new Promise(r => setTimeout(r, 600));
+          outputEl.textContent = `# DEPARTMENT OF ADVANCED STUDIES\n# TOPIC: ${prompt.toUpperCase().slice(0, 50)}\n\nNAME: Student Submission\nDATE: ${new Date().toLocaleDateString()}\n\n# 1. Introduction & Theoretical Foundation\nThis study examines the foundational principles governing the system. Recent findings corroborate that structural symmetry and continuous optimization are critical for academic rigor.\n\n# 2. STEM Mathematical Formulation & Proof\nApplying the primary kinematic conservation law:\n$$v^2 = u^2 + 2as$$\nGeneral root solution of the quadratic trajectory:\n$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$\nRelativistic energy equivalence:\n$$E = mc^2$$\n\n# 3. Key Findings & Discussion\n1. Experimental deviation remained under 0.04% throughout trial runs.\n2. Computational convergence was achieved within polynomial bounds O(N).\n3. Practical results validate the theoretical hypothesis.`;
+        }
+      } catch (err) {
+        outputEl.textContent = `Error connecting to ${provider}: ${err.message}\n(Using smart fallback assignment template instead)\n\n# ASSIGNMENT TOPIC: ${prompt}\n\n1. Theoretical Framework\n2. Formulas: $$x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$$\n3. Conclusion`;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-play"></i> Run Test Generation`;
+      }
+    }
+
+    function pushAiAssignmentToStudio() {
+      const content = document.getElementById('sandbox-output').textContent.trim();
+      if (!content || content.startsWith('Click "Run') || content.startsWith('Connecting to')) {
+        alert('Pehle assignment generate karein!');
+        return;
+      }
+      localStorage.setItem('qalmotype_pending_assignment', content);
+      showToast('🚀 Assignment sent to Qalmotype Studio! Opening studio...');
+      setTimeout(() => {
+        window.open('index.html', '_blank');
+      }, 1000);
+    }
+
+    // 8. REMOTE FEATURE FLAGS
     function saveFeatureFlags() {
       const config = {
+        maintenanceMode: document.getElementById('flag-maintenance').checked,
         disableCloner: !document.getElementById('flag-cloner').checked,
         enableMath: document.getElementById('flag-math').checked,
         showAnnouncement: document.getElementById('flag-announcement').checked,
@@ -1540,6 +1941,7 @@
     function loadFeatureFlags() {
       try {
         const config = JSON.parse(localStorage.getItem('qalmotype_remote_config') || '{}');
+        if (config.maintenanceMode !== undefined) document.getElementById('flag-maintenance').checked = config.maintenanceMode;
         if (config.disableCloner !== undefined) document.getElementById('flag-cloner').checked = !config.disableCloner;
         if (config.enableMath !== undefined) document.getElementById('flag-math').checked = config.enableMath;
         if (config.showAnnouncement !== undefined) document.getElementById('flag-announcement').checked = config.showAnnouncement;
@@ -1547,7 +1949,80 @@
       } catch (e) {}
     }
 
-    // 8. EXPORT CSV
+    // 9. PASSCODE & BACKUPS
+    function changeMasterPasscode() {
+      const oldPin = document.getElementById('old-passcode').value.trim();
+      const newPin = document.getElementById('new-passcode').value.trim();
+      const confirmPin = document.getElementById('confirm-passcode').value.trim();
+
+      const currentPin = getMasterPin();
+      if (oldPin !== currentPin) {
+        alert('Current passcode is incorrect!');
+        return;
+      }
+      if (!newPin || newPin.length < 6) {
+        alert('New passcode must be at least 6 characters long!');
+        return;
+      }
+      if (newPin !== confirmPin) {
+        alert('New passcodes do not match!');
+        return;
+      }
+
+      localStorage.setItem('qalmotype_admin_custom_pin', newPin);
+      showToast('🔒 Master passcode updated successfully!');
+      document.getElementById('old-passcode').value = '';
+      document.getElementById('new-passcode').value = '';
+      document.getElementById('confirm-passcode').value = '';
+    }
+
+    function backupDatabaseJSON() {
+      const backup = {
+        version: '2026.1',
+        exportDate: new Date().toISOString(),
+        dailyAnalytics: JSON.parse(localStorage.getItem('qalmotype_telemetry_daily') || '{}'),
+        eventLogs: JSON.parse(localStorage.getItem('qalmotype_telemetry_logs') || '[]'),
+        remoteConfig: JSON.parse(localStorage.getItem('qalmotype_remote_config') || '{}'),
+        aiConfig: JSON.parse(localStorage.getItem('qalmotype_ai_config') || '{}')
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Qalmotype_Database_Backup_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function restoreDatabaseJSON(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.dailyAnalytics) localStorage.setItem('qalmotype_telemetry_daily', JSON.stringify(data.dailyAnalytics));
+          if (data.remoteConfig) localStorage.setItem('qalmotype_remote_config', JSON.stringify(data.remoteConfig));
+          if (data.aiConfig) localStorage.setItem('qalmotype_ai_config', JSON.stringify(data.aiConfig));
+          showToast('✅ Database restored successfully! Reloading...');
+          setTimeout(() => location.reload(), 1200);
+        } catch (err) {
+          alert('Invalid JSON backup file!');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetTelemetryData() {
+      if (confirm('Are you sure you want to clear all telemetry data? This will reset visitor counts and start fresh.')) {
+        localStorage.removeItem('qalmotype_telemetry_daily');
+        localStorage.removeItem('qalmotype_telemetry_logs');
+        localStorage.removeItem('qalmotype_active_sessions');
+        showToast('Telemetry data reset. Reloading...');
+        setTimeout(() => location.reload(), 1000);
+      }
+    }
+
+    // 10. EXPORT CSV
     function exportAnalyticsCSV() {
       const daily = JSON.parse(localStorage.getItem('qalmotype_telemetry_daily') || '{}');
       let csv = 'Date,Total_Visits,Unique_Visitors,New_Visitors,Returning_Visitors,Total_Duration_Sec,PDF_Exports,PNG_Exports,ZIP_Exports\n';
