@@ -1167,6 +1167,31 @@ textarea#input-text:focus {
   background-color: #ffffff;
 }
 
+.cornell-notes-preview {
+  background: 
+    linear-gradient(to right, transparent 32%, #cbd5e1 32%, #cbd5e1 34%, transparent 34%),
+    linear-gradient(to bottom, transparent 20%, #94a3b8 20%, #94a3b8 22%, transparent 22%),
+    linear-gradient(to top, transparent 22%, #94a3b8 22%, #94a3b8 24%, transparent 24%),
+    repeating-linear-gradient(0deg, transparent, transparent 5px, #e2e8f0 5px, #e2e8f0 6px);
+  background-color: #ffffff;
+}
+
+.cambridge-exam-preview {
+  background: 
+    linear-gradient(to bottom, #f1f5f9 26%, #cbd5e1 26%, #cbd5e1 28%, transparent 28%),
+    linear-gradient(to right, transparent 22%, #cbd5e1 22%, #cbd5e1 24%, transparent 24%),
+    repeating-linear-gradient(0deg, transparent, transparent 5px, #bfdbfe 5px, #bfdbfe 6px);
+  background-color: #ffffff;
+  border-top: 3px solid #0284c7;
+}
+
+.engineering-quad-preview {
+  background-size: 5px 5px;
+  background-image: linear-gradient(to right, #a7f3d0 1px, transparent 1px), linear-gradient(to bottom, #a7f3d0 1px, transparent 1px);
+  background-color: #f0fdf4;
+  border: 1px solid #10b981;
+}
+
 /* ==========================================================================
    TOGGLES
    ========================================================================== */

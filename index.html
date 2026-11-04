@@ -22,6 +22,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <!-- PDF.js for rendering uploaded handwriting PDFs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- KaTeX for STEM Math & Scientific Formula rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -141,6 +144,8 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
             <!-- SMART CHIP ACTIONS & FORMATTING -->
             <div class="chip-bar">
               <button class="chip" id="chip-clean-ai" title="Remove ChatGPT robot phrases, asterisks & AI markers"><i class="fa-solid fa-wand-magic-sparkles" style="color:#6366f1;"></i> Clean AI Text</button>
+              <button class="chip" id="chip-math-formula" title="Insert STEM / Math Equation (LaTeX)"><i class="fa-solid fa-square-root-variable" style="color:#0ea5e9;"></i> $$Formula$$</button>
+              <button class="chip" id="chip-fraction" title="Insert Fraction"><i class="fa-solid fa-divide" style="color:#38bdf8;"></i> \frac{a}{b}</button>
               <button class="chip" id="chip-heading" title="Add prominent heading"><i class="fa-solid fa-heading"></i> Heading</button>
               <button class="chip" id="chip-bold" title="Write with heavier pen pressure"><i class="fa-solid fa-bold"></i> **Bold Pressure**</button>
               <button class="chip" id="chip-underline" title="Hand-drawn natural underline"><i class="fa-solid fa-underline"></i> __Underline__</button>
@@ -168,24 +173,54 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
             </div>
           </div>
 
-          <!-- DIAGRAM / SKETCH INSERTION -->
+          <!-- DIAGRAM / SKETCH INSERTION (WITH HAND-DRAWN SKETCH FILTER) -->
           <div class="panel-card">
             <div class="card-header">
-              <span class="card-title"><i class="fa-solid fa-diagram-project"></i> Diagram / Formula Image</span>
-              <span class="badge-pill">Optional</span>
+              <span class="card-title"><i class="fa-solid fa-diagram-project"></i> Diagram & Hand-Drawn Sketch</span>
+              <span class="badge-free">Sketch Filter</span>
             </div>
-            <p class="card-desc">Agar assignment mein koi flowchart, circuit ya chemical diagram chipkaani ho:</p>
-            <label class="custom-file-upload">
-              <input type="file" id="diagram-input" accept="image/*">
-              <i class="fa-solid fa-image"></i>
-              <span id="diagram-upload-label">Attach Diagram Image</span>
-            </label>
+            <p class="card-desc">Circuit diagrams, biological cells, graphs ya flowcharts add karein. <strong>Ctrl+V</strong> press karke direct clipboard se paste bhee kar saktay hain!</p>
+            
+            <div class="diagram-btn-row" style="display:flex; gap:8px; margin-bottom:8px;">
+              <label class="custom-file-upload" style="flex:1; margin-bottom:0;">
+                <input type="file" id="diagram-input" accept="image/*">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span id="diagram-upload-label">Upload Diagram</span>
+              </label>
+              <button type="button" class="btn btn-ghost btn-sm" id="btn-paste-diagram" title="Paste screenshot from clipboard"><i class="fa-solid fa-paste"></i> Paste (Ctrl+V)</button>
+            </div>
+
             <div id="diagram-controls" style="display:none; margin-top:10px;">
               <div class="slider-row">
-                <label>Diagram Size: <span id="diagram-size-val">220px</span></label>
-                <input type="range" id="diagram-size" min="100" max="450" value="220" step="10">
+                <label>Diagram Size: <span id="diagram-size-val">240px</span></label>
+                <input type="range" id="diagram-size" min="120" max="500" value="240" step="10">
               </div>
-              <button id="btn-remove-diagram" class="btn btn-ghost btn-sm btn-full"><i class="fa-solid fa-xmark"></i> Remove Diagram</button>
+              <div class="slider-row">
+                <label>Vertical Position: <span id="diagram-pos-val">Auto Flow</span></label>
+                <input type="range" id="diagram-pos-y" min="200" max="1500" value="800" step="20">
+              </div>
+              <div class="slider-row">
+                <label>Sketch Filter:</label>
+                <select id="diagram-filter" class="form-select" style="padding:4px 8px; border-radius:6px; font-size:12px; border:1px solid #cbd5e1; background:var(--bg-card); color:var(--text-primary);">
+                  <option value="blueprint">Pen Ink Blueprint (Matches Ink Color)</option>
+                  <option value="pencil">Pencil Sketch (Graphite Gray)</option>
+                  <option value="original">Original Photo / Colors</option>
+                </select>
+              </div>
+              <div class="toggle-row" style="padding:6px 0;">
+                <div>
+                  <strong>Hand-Drawn Sketch Border</strong>
+                  <p>Computer frame ke bajaye organic hand-drawn sketch border</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="toggle-diagram-border" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div style="margin-top:6px;">
+                <input type="text" id="diagram-caption" placeholder="Caption e.g. Fig 1.1: DC Circuit Diagram" style="width:100%; padding:6px 10px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px; background:var(--bg-card); color:var(--text-primary);">
+              </div>
+              <button id="btn-remove-diagram" class="btn btn-ghost btn-sm btn-full" style="margin-top:8px; color:#ef4444;"><i class="fa-solid fa-trash-can"></i> Remove Diagram</button>
             </div>
           </div>
 
@@ -373,8 +408,8 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
         <div class="tab-content" id="paper-tab">
           <div class="panel-card">
             <div class="card-header">
-              <span class="card-title"><i class="fa-solid fa-file"></i> Page Layout & Paper Library</span>
-              <span class="badge-pill">8 Styles</span>
+              <span class="card-title"><i class="fa-solid fa-file"></i> Page Layout & Stationery Library</span>
+              <span class="badge-pill">11 Styles</span>
             </div>
             <div class="paper-grid" id="paper-selector">
               <button class="paper-card active" data-paper="ruled-margin">
@@ -382,6 +417,27 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
                 <div class="paper-info">
                   <strong>Assignment Register</strong>
                   <small>Double red margin & university blue lines</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="cornell-notes">
+                <div class="paper-preview cornell-notes-preview"></div>
+                <div class="paper-info">
+                  <strong>Cornell Notes (Ivy League)</strong>
+                  <small>Cue column, notes area & summary block</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="cambridge-exam">
+                <div class="paper-preview cambridge-exam-preview"></div>
+                <div class="paper-info">
+                  <strong>Cambridge / Oxford Exam</strong>
+                  <small>Candidate header box & examiner margin</small>
+                </div>
+              </button>
+              <button class="paper-card" data-paper="engineering-quad">
+                <div class="paper-preview engineering-quad-preview"></div>
+                <div class="paper-info">
+                  <strong>Engineering Quadrille Grid</strong>
+                  <small>5mm precision calculation grid with title block</small>
                 </div>
               </button>
               <button class="paper-card" data-paper="ruled-plain">
@@ -401,7 +457,7 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
               <button class="paper-card" data-paper="lab-green">
                 <div class="paper-preview lab-green-preview"></div>
                 <div class="paper-info">
-                  <strong>Lab / Engineering Grid</strong>
+                  <strong>Lab / Computation Pad</strong>
                   <small>Technical green calculation grid</small>
                 </div>
               </button>
@@ -437,7 +493,7 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
                 <div class="paper-preview french-ruled-preview"></div>
                 <div class="paper-info">
                   <strong>French Ruled (Seyes)</strong>
-                  <small>Fine lines for cursive practice</small>
+                  <small>Fine 2mm auxiliary lines for cursive practice</small>
                 </div>
               </button>
               <button class="paper-card" data-paper="blackboard">
@@ -525,9 +581,10 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
         <div class="tab-content" id="realism-tab">
           <div class="panel-card">
             <div class="card-header">
-              <span class="card-title"><i class="fa-solid fa-shield-halved"></i> Anti-Detection Realism</span>
+              <span class="card-title"><i class="fa-solid fa-shield-halved"></i> Anti-Detection & Fatigue Engine</span>
+              <span class="badge-free">100% Unique</span>
             </div>
-            <p class="card-desc">Computer font hone ka shaq khatam karne ke liye natural human imperfections:</p>
+            <p class="card-desc">Computer font pakre jaane se bachne ke liye natural human imperfections aur muscle fatigue:</p>
             
             <div class="slider-row">
               <label for="jitter-amount">Baseline Jitter (Wobbly Line): <span id="jitter-val">1.2px</span></label>
@@ -542,6 +599,30 @@ Tip: Headings ke liye # lagayein, Highlight ke liye ==word==, Mistake ke liye ~~
             <div class="slider-row">
               <label for="ink-bleed">Ink Bleed / Wetness: <span id="bleed-val">0.3</span></label>
               <input type="range" id="ink-bleed" min="0" max="1" value="0.3" step="0.05">
+            </div>
+
+            <!-- HUMAN FATIGUE & BASELINE DRIFT -->
+            <div class="toggle-row" style="margin-top:6px;">
+              <div>
+                <strong><i class="fa-solid fa-person-walking-arrow-right" style="color:#6366f1;"></i> Human Muscle Fatigue & Slope Drift</strong>
+                <p>Page ke aakhir tak likhte hue haath thakne se natural slight downward tilt aur margin shift</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggle-human-fatigue" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <!-- FRESH INK HAND SMUDGE -->
+            <div class="toggle-row">
+              <div>
+                <strong><i class="fa-solid fa-fingerprint" style="color:#0ea5e9;"></i> Fresh Ink Hand Smudge</strong>
+                <p>Likhai ke dauran fresh ink par se haath guzarne ka authentic faint drag mark</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggle-ink-smudge">
+                <span class="slider"></span>
+              </label>
             </div>
           </div>
 
