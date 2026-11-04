@@ -1292,6 +1292,10 @@ function setupEventListeners() {
     if (e.key === 'Escape' && document.body.classList.contains('zen-mode')) {
       toggleZenMode();
     }
+    // Secret Admin Shortcut: Ctrl + Alt + A
+    if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'a') {
+      window.location.href = 'admin.html';
+    }
   });
 
   // Mobile / Tablet View Dock Navigation
@@ -2912,6 +2916,9 @@ function downloadCurrentPageImage() {
   link.download = `Qalmotype_Assignment_Page_${currentViewPage}.png`;
   link.href = canvasEl.toDataURL('image/png');
   link.click();
+  if (window.QalmotypeTelemetry) {
+    window.QalmotypeTelemetry.trackEvent('png_export', { action: 'Saved PNG Page ' + currentViewPage });
+  }
 }
 
 async function downloadFullPDF() {
@@ -2938,6 +2945,9 @@ async function downloadFullPDF() {
     });
 
     pdf.save('Qalmotype_Handwritten_Assignment.pdf');
+    if (window.QalmotypeTelemetry) {
+      window.QalmotypeTelemetry.trackEvent('pdf_export', { action: 'Exported Multi-page PDF (' + canvases.length + ' pages)' });
+    }
   } catch (err) {
     alert('PDF generate karne mein masla hua.');
     console.error(err);
